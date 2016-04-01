@@ -22,3 +22,7 @@ select,
 textarea {
     max-width: 280px;
 }
+
+.pac-container:after{
+    content:none !important;
+}

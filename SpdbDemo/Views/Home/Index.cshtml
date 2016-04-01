@@ -1,18 +1,85 @@
-﻿@{
-    ViewBag.Title = "Home Page";
-}
+﻿<script src="http://maps.google.com/maps/api/js?sensor=true" type="text/javascript"></script>
+<script src="~/Scripts/AngularModels/FormModule.js"></script>
+<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?libraries=places&sensor=false"></script>
 
-<div>
-    <div id="map"></div>
-    <script>
-      function initMap() {
-        var mapDiv = document.getElementById('map');
-        var map = new google.maps.Map(mapDiv, {
-          center: {lat: 44.540, lng: -78.546},
-          zoom: 8
-        });
-      }
-    </script>
-    <script src="https://maps.googleapis.com/maps/api/js?callback=initMap"
-            async defer></script>
+<div ng-app="FormApp">
+    <div ng-controller="FormController" layout="column">
+        @* Here is left panel with form for user*@
+        <div layout="row" layout-xs="column">
+            <md-card flex flex-gt-xs="25">
+                <md-content class="md-no-momentum">
+                    <div class="FlexContainer" layout layout-wrap layout-padding layout-align="center">
+                        <div class="FlexItem" layout="row">
+                            <div>
+                                <md-switch class="md-primary" style="min-width: 190px;" aria-label="Use my location" ng-model="user.useMyLocation">
+                                    Use my location
+                                </md-switch>
+                            </div>
+                        </div>
+                        <div class="FlexItem" layout="row">
+                            <div>
+                                <img src="~/Resources/start.png">
+                            </div>
+                            <div>
+                                <md-input-container class="md-icon-float md-block">
+                                    <label>Start location</label>
+                                    <input ng-model="navigation.start" googleplace placeholder="Enter start location" type="text">
+                                </md-input-container>
+                            </div>
+                        </div>
+                        <div class="FlexItem" layout="row">
+                            <div>
+                                <img src="~/Resources/stop.png">
+                            </div>
+                            <div>
+                                <md-input-container class="md-icon-float md-block">
+                                    <label>Destination</label>
+                                    <input ng-model="navigation.destination" placeholder="Enter destination" googleplace type="text">
+                                </md-input-container>
+                            </div>
+                        </div>
+                        <div class="FlexItem" layout="row">
+                            <div>
+                                <md-button class="md-raised md-primary">Search</md-button>
+                            </div>
+                        </div>
+                    </div>
+                </md-content>
+            </md-card>
+            @* Here is right panel with map*@
+            <md-card flex>
+                <center>
+                    <h2>Warsaw</h2>
+                </center>
+                <md-card-content>
+                    <div id="map_canvas" style="height: 600px;"></div>
+                </md-card-content>
+            </md-card>
+        </div>
+    </div>
 </div>
+
+
+
+
+@section scripts {
+    <section class="scripts">
+
+        <script type="text/javascript">
+            $(document).ready(function () {
+                Initialize();
+            });
+
+            function Initialize() {
+                google.maps.visualRefresh = true;
+                var Warsaw = new google.maps.LatLng(52.229833, 21.011734);
+                var mapOptions = {
+                    zoom: 14,
+                    center: Warsaw,
+                    mapTypeId: google.maps.MapTypeId.G_NORMAL_MAP
+                };
+                var map = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
+            }
+        </script>
+    </section>
+}
