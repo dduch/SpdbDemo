@@ -6,39 +6,39 @@
     <div ng-controller="FormController" layout="column">
         @* Here is left panel with form for user*@
         <div layout="row" layout-xs="column">
-            <md-card flex flex-gt-xs="25">
-                <md-content class="md-no-momentum">
-                    <div class="FlexContainer" layout layout-wrap layout-padding layout-align="center">
-                        <div class="FlexItem" layout="row">
+            <md-card flex="25" layout="column" layout-xs flex-xs="100">
+                <md-content class="md-no-momentum" flex layout="column" layout-margin>
+                    <div class="FlexContainer layout-column">
+                        <div class="FlexItem layout-row" layout="row" flex="100" layout-align="center">
                             <div>
-                                <md-switch class="md-primary" style="min-width: 190px;" aria-label="Use my location" ng-model="user.useMyLocation">
+                                <md-switch class="md-primary" style="min-width: 190px" aria-label="Use my location" ng-model="user.useMyLocation">
                                     Use my location
                                 </md-switch>
                             </div>
                         </div>
-                        <div class="FlexItem" layout="row">
+                        <div flex layout="row">
                             <div>
                                 <img src="~/Resources/start.png">
                             </div>
-                            <div>
+                            <div flex>
                                 <md-input-container class="md-icon-float md-block">
                                     <label>Start location</label>
                                     <input ng-model="navigation.start" googleplace placeholder="Enter start location" type="text">
                                 </md-input-container>
                             </div>
                         </div>
-                        <div class="FlexItem" layout="row">
+                        <div layout="row">
                             <div>
                                 <img src="~/Resources/stop.png">
                             </div>
-                            <div>
+                            <div flex>
                                 <md-input-container class="md-icon-float md-block">
                                     <label>Destination</label>
                                     <input ng-model="navigation.destination" placeholder="Enter destination" googleplace type="text">
                                 </md-input-container>
                             </div>
                         </div>
-                        <div class="FlexItem" layout="row">
+                        <div class="FlexItem" layout="row" layout-align="center">
                             <div>
                                 <md-button class="md-raised md-primary">Search</md-button>
                             </div>
