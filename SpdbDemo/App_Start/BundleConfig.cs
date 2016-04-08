@@ -36,7 +36,6 @@ namespace SpdbDemo
                     "~/Scripts/angular-aria/angular-aria.js",
                     "~/Scripts/angular-material/angular-material.js"
                     ));
-
         }
     }
 }
