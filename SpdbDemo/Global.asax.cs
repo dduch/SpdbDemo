@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Castle.Windsor;
+using SpdbDemo.DI;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -16,6 +18,11 @@ namespace SpdbDemo
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+
+            var container = new WindsorContainer();
+            container.Install(new WindsorInstaller());
+            var castleControllerFactory = new WindsorControllerFactory(container);
+            ControllerBuilder.Current.SetControllerFactory(castleControllerFactory);
         }
     }
 }
