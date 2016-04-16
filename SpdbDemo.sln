@@ -1,11 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.24720.0
+VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpdbDemo", "SpdbDemo\SpdbDemo.csproj", "{E3F06D58-062E-468E-88F3-974CF4194121}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpdbDemo.Tests", "SpdbDemo.Tests\SpdbDemo.Tests.csproj", "{E04331AA-13D1-4AEB-B430-AE68520B2D72}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NavigationResolver", "NavigationResolver\NavigationResolver.csproj", "{35BE1EC4-5D95-4F1C-BA54-D6FA8923E659}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NavigationTest", "NavigationTest\NavigationTest.csproj", "{8CBE0A01-9573-4A60-B389-ACF6E5EC42AB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +25,14 @@ Global
 		{E04331AA-13D1-4AEB-B430-AE68520B2D72}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E04331AA-13D1-4AEB-B430-AE68520B2D72}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E04331AA-13D1-4AEB-B430-AE68520B2D72}.Release|Any CPU.Build.0 = Release|Any CPU
+		{35BE1EC4-5D95-4F1C-BA54-D6FA8923E659}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{35BE1EC4-5D95-4F1C-BA54-D6FA8923E659}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{35BE1EC4-5D95-4F1C-BA54-D6FA8923E659}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{35BE1EC4-5D95-4F1C-BA54-D6FA8923E659}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8CBE0A01-9573-4A60-B389-ACF6E5EC42AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8CBE0A01-9573-4A60-B389-ACF6E5EC42AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8CBE0A01-9573-4A60-B389-ACF6E5EC42AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8CBE0A01-9573-4A60-B389-ACF6E5EC42AB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
