@@ -36,6 +36,12 @@ namespace SpdbDemo
                     "~/Scripts/angular-aria/angular-aria.js",
                     "~/Scripts/angular-material/angular-material.js"
                     ));
+
+            bundles.Add(new ScriptBundle("~/bundles/angularApp").Include(
+                   "~/Scripts/AngularModels/FormModule.js",
+                   "~/Scripts/AngularModels/Constants.js",
+                   "~/Scripts/AngularModels/FormController.js"
+                   ));
         }
     }
 }

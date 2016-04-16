@@ -1,6 +1,6 @@
 ﻿///<reference path="FormModule.js" />
 
-FormModule.controller('FormController', ['$scope', 'sharedMapService', function ($scope, sharedMapService) {
+FormModule.controller('FormController', ['$scope', 'sharedMapService','$http', function ($scope, sharedMapService, $http) {
     $scope.navigation = {
         start: '',
         destination: '',
@@ -40,5 +40,16 @@ FormModule.controller('FormController', ['$scope', 'sharedMapService', function 
                 }
             }
         }
+    },
+
+    $scope.OnSearchClickAction = function(){
+        $http({
+            method: 'GET',
+            url: CONST.NominatimSearch + $scope.navigation.start + CONST.FormatType
+        }).then(function successCallback(response) {
+            alert(response);
+        }, function errorCallback(response) {
+            alert(response);
+        });
     }
 }]);

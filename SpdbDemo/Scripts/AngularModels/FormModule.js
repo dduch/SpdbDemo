@@ -1,4 +1,6 @@
-﻿var FormModule = angular.module('FormApp', ['ngMaterial']);
+﻿///<reference path="Constants.js" />
+
+var FormModule = angular.module('FormApp', ['ngMaterial']);
 
 FormModule.factory('sharedMapService', function () {
     var sharedMap = {};
@@ -41,11 +43,8 @@ FormModule.factory('sharedMapService', function () {
 
         // Start position for the map (hardcoded here for simplicity,
         // but maybe you want to get this from the URL params)
-        var lat = 52.229833;
-        var lon = 21.011734;
-        var zoom = 13;
-        var lonLat = new OpenLayers.LonLat(lon, lat).transform(new OpenLayers.Projection("EPSG:4326"), sharedMap.map.getProjectionObject());
-        sharedMap.map.setCenter(lonLat, zoom);
+        var lonLat = new OpenLayers.LonLat(CONST.WarsawLongitude, CONST.WarsawLatitude).transform(new OpenLayers.Projection("EPSG:4326"), sharedMap.map.getProjectionObject());
+        sharedMap.map.setCenter(lonLat, CONST.DefaultZoom);
     }
 
     return sharedMap;

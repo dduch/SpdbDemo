@@ -1,8 +1,8 @@
-﻿<script src="http://maps.googleapis.com/maps/api/js?libraries=places&sensor=false" ></script>
+﻿
+<script src="http://maps.google.com/maps/api/js?sensor=true" type="text/javascript"></script>
+<script src="http://maps.googleapis.com/maps/api/js?libraries=places&sensor=false" ></script>
 <script src="http://www.openlayers.org/api/OpenLayers.js"></script>
 <script src="http://www.openstreetmap.org/openlayers/OpenStreetMap.js"></script>
-<script src="~/Scripts/AngularModels/FormModule.js"></script>
-<script src="~/Scripts/AngularModels/FormController.js"></script>
 
 
 <div ng-app="FormApp">
@@ -42,7 +42,7 @@
                                 </md-input-container>
                             </div>
                         </div>
-                        <div class="FlexItem" layout="row" layout-align="center">
+                        <div class="FlexItem" layout="row" layout-align="center" ng-click="OnSearchClickAction()">
                             <div>
                                 <md-button class="md-raised md-primary">Search</md-button>
                             </div>
