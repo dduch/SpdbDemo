@@ -171,8 +171,9 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\RouteController.cs" />
-    <Compile Include="DI\WindsorControllerFactory.cs" />
-    <Compile Include="DI\WindsorInstaller.cs" />
+    <Compile Include="DI\WindsorDependecyResolver.cs" />
+    <Compile Include="DI\WindsorDependencyScope.cs" />
+    <Compile Include="DI\WindsorWebApiInstaller.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -253,6 +254,12 @@
     <Content Include="packages.config" />
     <None Include="Project_Readme.html" />
     <Content Include="Scripts\jquery-1.10.2.min.map" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\NavigationResolver\NavigationResolver.csproj">
+      <Project>{35be1ec4-5d95-4f1c-ba54-d6fa8923e659}</Project>
+      <Name>NavigationResolver</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

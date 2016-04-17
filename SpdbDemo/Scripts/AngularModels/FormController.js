@@ -6,12 +6,18 @@ FormModule.controller('FormController', ['$scope', 'sharedMapService','$http', f
         destination: '',
         useMyLocation: false,
         latitude: undefined,
-        longitude: undefined
+        longitude: undefined,
+        autocompleteData: function(query){
+            return $scope.querySearch(query);
+        },
+        selectedItem: undefined,
+        searchText: ""
     };
 
     angular.element(document).ready(function () {
         sharedMapService.initialize();
     });
+
 
     $scope.onUseMyLocationChange = function () {
         if ($scope.navigation.useMyLocation == true && navigator.geolocation) {
@@ -42,12 +48,38 @@ FormModule.controller('FormController', ['$scope', 'sharedMapService','$http', f
         }
     },
 
+    $scope.querySearch = function (query) {
+        return $http.get(CONST.NominatimSearch + query + CONST.FormatType)
+                    .then(function(response) {
+                        return response.data;
+                    }, function(response) {});
+    },
+
     $scope.OnSearchClickAction = function(){
         $http({
             method: 'GET',
             url: CONST.NominatimSearch + $scope.navigation.start + CONST.FormatType
         }).then(function successCallback(response) {
             alert(response);
+            $scope.navigation.latitude = response.data[0].lat;
+            $scope.navigation.longitude = response.data[0].lon;
+            $scope.searchRoute();
+        }, function errorCallback(response) {
+            alert(response);
+        });
+    },
+
+    $scope.searchRoute = function(){
+        $http({
+            method: 'POST',
+            url: window.location.origin + '/api/Route/FindRoute',
+            data: {
+                Lat: $scope.navigation.latitude,
+                Long: $scope.navigation.longitude
+            }
+        }).then(function successCallback(response) {
+            alert(response);
+            $scope.searchRoute();
         }, function errorCallback(response) {
             alert(response);
         });

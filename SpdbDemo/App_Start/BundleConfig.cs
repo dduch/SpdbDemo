@@ -32,9 +32,9 @@ namespace SpdbDemo
             bundles.Add(new ScriptBundle("~/bundles/angular").Include(
                     "~/Scripts/angular.js",
                     "~/Scripts/angular-route.js",
-                    "~/Scripts/angular-animate/angular-animate.js",
-                    "~/Scripts/angular-aria/angular-aria.js",
-                    "~/Scripts/angular-material/angular-material.js"
+                    "~/Scripts/angular-animate/angular-animate.min.js",
+                    "~/Scripts/angular-aria/angular-aria.min.js",
+                    "~/Scripts/angular-material/angular-material.min.js"
                     ));
 
             bundles.Add(new ScriptBundle("~/bundles/angularApp").Include(
