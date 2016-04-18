@@ -13,7 +13,7 @@ namespace NavigationTest
         public void SampleTest()
         {
             INetwork net = new Network();
-            Point src = new Point(), dst = new Point();
+            Point src = new Point(0.0, 0.0), dst = new Point(0.0, 0.0);
             Assert.Throws(typeof(NotImplementedException), () => net.GetBestRoute(src, dst));
         }
     }

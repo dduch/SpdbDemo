@@ -32,6 +32,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Device" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -44,6 +45,7 @@
     <Compile Include="DataModels\Route.cs" />
     <Compile Include="DataProviders\GeoDataProvider.cs" />
     <Compile Include="Interfaces\IGeoDataProvider.cs" />
+    <Compile Include="Interfaces\IGraph.cs" />
     <Compile Include="Interfaces\INetwork.cs" />
     <Compile Include="Interfaces\IRoute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
