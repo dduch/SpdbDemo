@@ -11,7 +11,6 @@ namespace NavigationResolver.Interfaces
 
         IRoute GetRoute(Point source, Point destination, RouteType prefferedType, double lengthRestriction = double.PositiveInfinity);
 
-
         IEnumerable<Point> GetStations();
     }
 }

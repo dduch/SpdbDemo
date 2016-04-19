@@ -1,4 +1,5 @@
-﻿
+﻿using System.Device.Location;
+
 namespace NavigationResolver.Types
 {
     public enum RouteType
@@ -7,9 +8,11 @@ namespace NavigationResolver.Types
         Cycle
     }
 
-    public struct Point
+    public class Point : GeoCoordinate
     {
-        double Lat;
-        double Long;
+        public Point(double latitude, double longitude) : base(latitude, longitude)
+        {
+
+        }
     }
 }
