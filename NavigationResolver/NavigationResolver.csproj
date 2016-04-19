@@ -43,6 +43,9 @@
   <ItemGroup>
     <Compile Include="DataModels\Network.cs" />
     <Compile Include="DataModels\Route.cs" />
+    <Compile Include="DataModels\SubGraph.cs" />
+    <Compile Include="DataModels\SuperGraph.cs" />
+    <Compile Include="DataModels\GraphStructures.cs" />
     <Compile Include="DataProviders\GeoDataProvider.cs" />
     <Compile Include="Interfaces\IGeoDataProvider.cs" />
     <Compile Include="Interfaces\IGraph.cs" />
