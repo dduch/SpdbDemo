@@ -4,8 +4,8 @@
 <div ng-app="FormApp">
     <div ng-controller="FormController" layout="column">
         @* Here is left panel with form for user*@
-        <div layout="row" layout-xs="column">
-            <md-card flex="25" layout="column" layout-xs flex-xs="100">
+        <div layout="row">
+            <md-card flex layout="column" layout-xs flex-xs="100">
                 <md-content class="md-no-momentum" flex layout="column" layout-margin>
                     <div class="FlexContainer layout-column">
                         <div class="FlexItem layout-row" layout="row" flex="100" layout-align="center">
@@ -16,39 +16,54 @@
                                 </md-switch>
                             </div>
                         </div>
-                        <div flex layout="row">
-                            <div>
-                                <img src="~/Resources/start.png">
+                        <div class="FlexItem layout-row" layout="row">
+                            <div flex layout="row">
+                                <div>
+                                    <img src="~/Resources/start.png">
+                                </div>
+                                <div flex>
+                                    <md-autocomplete md-floating-label="Start location"
+                                                     md-item-text="item.display_name"
+                                                     md-items="item in navigation.autocompleteData(navigation.startSearchText)"
+                                                     md-search-text="navigation.startSearchText"
+                                                     md-selected-item="navigation.selectedStartItem"
+                                                     md-input-name="autocompleteField"
+                                                     md-no-cache="true"
+                                                     required="true">
+                                        <md-item-template>
+                                            <span md-highlight-text="navigation.startSearchText">{{item.display_name}}</span>
+                                        </md-item-template>
+                                        <div ng-messages="searchForm.autocompleteField.$error" ng-if="searchForm.autocompleteField.$touched">
+                                            <div ng-message="required">You <b>must</b> have a favorite movie.</div>
+                                            <div ng-message="minlength">Your entry is not long enough.</div>
+                                            <div ng-message="maxlength">Your entry is too long.</div>
+                                        </div>
+                                    </md-autocomplete>
+                                </div>
                             </div>
-                            <div flex>
-                                <md-autocomplete md-floating-label="Start location"
-                                                 md-item-text="item.display_name"
-                                                 md-items="item in navigation.autocompleteData(navigation.searchText)"
-                                                 md-search-text="navigation.searchText"
-                                                 md-selected-item="navigation.selectedItem"
-                                                 md-input-name="autocompleteField"
-                                                 md-no-cache="true" 
-                                                 required="true">
-                                    <md-item-template>
-                                        <span md-highlight-text="navigation.searchText">{{item.display_name}}</span>
-                                    </md-item-template>
-                                    <div ng-messages="searchForm.autocompleteField.$error" ng-if="searchForm.autocompleteField.$touched">
-                                        <div ng-message="required">You <b>must</b> have a favorite movie.</div>
-                                        <div ng-message="minlength">Your entry is not long enough.</div>
-                                        <div ng-message="maxlength">Your entry is too long.</div>
-                                    </div>
-                                </md-autocomplete>
-                            </div>
-                        </div>
-                        <div layout="row">
-                            <div>
-                                <img src="~/Resources/stop.png">
-                            </div>
-                            <div flex>
-                                <md-input-container class="md-icon-float md-block">
-                                    <label>Destination</label>
-                                    <input ng-model="navigation.destination" placeholder="Enter destination" googleplace type="text">
-                                </md-input-container>
+                            <div flex layout="row">
+                                <div>
+                                    <img src="~/Resources/stop.png">
+                                </div>
+                                <div flex>
+                                    <md-autocomplete md-floating-label="Destination"
+                                                     md-item-text="item.display_name"
+                                                     md-items="item in navigation.autocompleteData(navigation.destinationSearchText)"
+                                                     md-search-text="navigation.destinationSearchText"
+                                                     md-selected-item="navigation.selectedDestinationItem"
+                                                     md-input-name="autocompleteField"
+                                                     md-no-cache="true"
+                                                     required="true">
+                                        <md-item-template>
+                                            <span md-highlight-text="navigation.destinationSearchText">{{item.display_name}}</span>
+                                        </md-item-template>
+                                        <div ng-messages="searchForm.autocompleteField.$error" ng-if="searchForm.autocompleteField.$touched">
+                                            <div ng-message="required">You <b>must</b> have a favorite movie.</div>
+                                            <div ng-message="minlength">Your entry is not long enough.</div>
+                                            <div ng-message="maxlength">Your entry is too long.</div>
+                                        </div>
+                                    </md-autocomplete>
+                                </div>
                             </div>
                         </div>
                         <div class="FlexItem" layout="row" layout-align="center" ng-click="OnSearchClickAction()">
@@ -59,6 +74,8 @@
                     </div>
                 </md-content>
             </md-card>
+        </div>
+        <div layout="row">
             @* Here is right panel with map*@
             <md-card flex>
                 <center>

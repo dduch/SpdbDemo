@@ -10,8 +10,10 @@ FormModule.controller('FormController', ['$scope', 'sharedMapService','$http', f
         autocompleteData: function(query){
             return $scope.querySearch(query);
         },
-        selectedItem: undefined,
-        searchText: ""
+        selectedStartItem: undefined,
+        selectedDestinationItem: undefined,
+        startSearchText: "",
+        destinationSearchText: ""
     };
 
     angular.element(document).ready(function () {
