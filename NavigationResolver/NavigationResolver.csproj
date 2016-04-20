@@ -42,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DataModels\Network.cs" />
+    <Compile Include="DataModels\NetworkBuilder.cs" />
     <Compile Include="DataModels\Route.cs" />
     <Compile Include="DataModels\SubGraph.cs" />
     <Compile Include="DataModels\SuperGraph.cs" />
