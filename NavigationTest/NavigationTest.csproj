@@ -57,6 +57,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="BikeStation.cs" />
     <Compile Include="FakeGeoDataProvider.cs" />
     <Compile Include="NetworkTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

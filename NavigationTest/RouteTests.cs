@@ -4,6 +4,7 @@ using NUnit.Framework;
 using NavigationResolver.DataModels;
 using NavigationResolver.Interfaces;
 using NavigationResolver.Types;
+using NavigationResolver.DataProviders;
 
 namespace NavigationTest
 {
@@ -96,5 +97,13 @@ namespace NavigationTest
             Assert.AreEqual(from0to4length, empty.GetLength());
             Assert.AreEqual(count, empty.GetPoints().Count());
         }
+
+        [Test]
+        public void CheckGeoProvider()
+        {
+            IGeoDataProvider geoProvider = new GeoDataProvider();
+            //geoProvider.GetStations();
+            geoProvider.GetRoute(new Point(52.2693319, 20.9833518), new Point(52.2184572, 21.0153582), RouteType.Cycle);
+        } 
     }
 }
