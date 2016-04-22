@@ -11,7 +11,7 @@ using NavigationResolver.Types;
 
 namespace NavigationResolver.DataModels
 {
-    public struct Vertex
+    public class Vertex
     {
         public Point Position;
         public List<int> Neighbors;
@@ -25,7 +25,7 @@ namespace NavigationResolver.DataModels
         }
     }
 
-    public struct IntergraphEdge
+    public class IntergraphEdge
     {
         public int StartVertex;
         public int EndVertex;
