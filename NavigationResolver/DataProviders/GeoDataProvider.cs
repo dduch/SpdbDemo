@@ -34,6 +34,15 @@ namespace NavigationResolver.DataProviders
             ["lang"] = "pl",
         };
 
+        private VeturiloStations veturiloStations;
+
+        public GeoDataProvider()
+        {
+            JavaScriptSerializer js = new JavaScriptSerializer();
+            string text = Encoding.UTF8.GetString(Resources.stations);
+            veturiloStations = (VeturiloStations)js.Deserialize(text, typeof(VeturiloStations));
+        }
+
         public IRoute GetRoute(Point source, Point destination, RouteType prefferedType, double lengthRestriction = double.PositiveInfinity)
         {
             Parameters["flat"] = source.Latitude.ToString(CultureInfo.InvariantCulture);
@@ -48,7 +57,6 @@ namespace NavigationResolver.DataProviders
             request.Method = "GET";
             WebResponse webResp = request.GetResponse();
             Rootobject route = null;
-
             using (var reader = new StreamReader(webResp.GetResponseStream()))
             {
                 JavaScriptSerializer js = new JavaScriptSerializer();
@@ -68,7 +76,21 @@ namespace NavigationResolver.DataProviders
 
         public IRoute GetRouteToNearestStation(Point p, bool direction)
         {
-            throw new NotImplementedException();
+            double distance = Double.PositiveInfinity;
+            Point nearestStation = null;
+
+            foreach(StationInfo station in veturiloStations.Stations)
+            {
+                Point dest = new Point(station.Latitude.Value, station.Longitude.Value);
+                double tempDist = p.GetDistanceTo(dest);
+                if (tempDist < distance)
+                {
+                    distance = tempDist;
+                    nearestStation = dest;
+                } 
+            }
+
+            return GetRoute(p, nearestStation, RouteType.Cycle);
         }
 
         public IEnumerable<Point> GetStations()

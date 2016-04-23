@@ -57,14 +57,22 @@ FormModule.controller('FormController', ['$scope', 'sharedMapService','$http', f
                     }, function(response) {});
     },
 
-    $scope.onSearchClickAction = function(){
+    $scope.onSearchClickAction = function () {
+        var requestDTO = {
+            StartPosition: {
+                latitude: $scope.navigation.selectedStartItem.lat,
+                longitude: $scope.navigation.selectedStartItem.lon,
+            },
+            DestinationPosition: {
+                latitude: $scope.navigation.selectedDestinationItem.lat,
+                longitude: $scope.navigation.selectedDestinationItem.lon,
+            },
+        }
+
      $http({
             method: 'POST',
             url: window.location.origin + '/api/Route/FindRoute',
-            data: {
-                Lat: $scope.navigation.latitude,
-                Long: $scope.navigation.longitude
-            }
+            data: JSON.stringify(requestDTO),
         }).then(function successCallback(response) {
             $scope.drawRoute(response.data);
         }, function errorCallback(response) {
@@ -78,8 +86,8 @@ FormModule.controller('FormController', ['$scope', 'sharedMapService','$http', f
         sharedMapService.map.addControl(new OpenLayers.Control.DrawFeature(lineLayer, OpenLayers.Handler.Path));
 
         var points = new Array();
-        var fromProjection = new OpenLayers.Projection("EPSG:4326");   // Transform from WGS 1984
-        var toProjection = new OpenLayers.Projection("EPSG:900913"); // to Spherical Mercator Projection
+        var fromProjection = new OpenLayers.Projection("EPSG:4326"); 
+        var toProjection = new OpenLayers.Projection("EPSG:900913"); 
 
         for (coordinate in data)
         {

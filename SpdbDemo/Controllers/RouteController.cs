@@ -2,6 +2,7 @@
 using NavigationResolver.DataProviders;
 using NavigationResolver.Interfaces;
 using NavigationResolver.Types;
+using SpdbDemo.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,11 +24,17 @@ namespace SpdbDemo.Controllers
         }
 
         [Route("api/Route/FindRoute")]
-        public IHttpActionResult FindRoute(Point point)
+        public IHttpActionResult FindRoute(RequestDTO request)
         {
-            geoDataProvider.GetStations();
-            IRoute route = geoDataProvider.GetRoute(new Point(52.2693319, 20.9833518), new Point(52.2184572, 21.0153582), RouteType.Cycle);
-            return Json(route.GetPoints().ToList());
+            try
+            {
+                IRoute route = routeFinder.GetBestRoute(new Point(52.2693319, 20.9833518), new Point(52.2184572, 21.0153582));
+                return Json(route.GetPoints().ToList());
+            }
+            catch(Exception ex)
+            {
+                return null;
+            }
         }
     }
 }

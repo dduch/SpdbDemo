@@ -20,7 +20,10 @@ namespace NavigationResolver.DataModels
 
         public Network(SuperGraph graph, IGeoDataProvider geoData, TravelMetric metric)
         {
-            this.graph = graph;
+            var builder = new NetworkBuilder(geoData, metric);
+            var subGraphs = builder.BuildSubGraphs();
+            var superGraph = builder.BuildSuperGraph(subGraphs);
+            this.graph = superGraph;
             this.geoData = geoData;
             this.metric = metric;       
         }
