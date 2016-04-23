@@ -38,6 +38,10 @@
       <HintPath>..\packages\Castle.Windsor.3.3.0\lib\net45\Castle.Windsor.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Priority Queue, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\OptimizedPriorityQueue.2.0.0\lib\net45\Priority Queue.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Device" />
@@ -51,6 +55,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Algorithms\Dijkstra.cs" />
     <Compile Include="DataModels\Network.cs" />
     <Compile Include="DataModels\NetworkBuilder.cs" />
     <Compile Include="DataModels\Route.cs" />

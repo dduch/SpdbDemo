@@ -66,6 +66,11 @@ namespace NavigationResolver.DataProviders
             return new Route(foundedRoute);
         }
 
+        public IRoute GetRouteToNearestStation(Point p, bool direction)
+        {
+            throw new NotImplementedException();
+        }
+
         public IEnumerable<Point> GetStations()
         {
             XElement xdoc = XElement.Load(Settings.Default.MapOfStationsUrl);
