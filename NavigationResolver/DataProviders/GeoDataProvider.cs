@@ -77,7 +77,6 @@ namespace NavigationResolver.DataProviders
                                               select p).ToList();
 
             List<Point> coordinates = new List<Point>();
-
             foreach (XElement node in stations)
             {
                 coordinates.Add(new Point((double)node.Attribute("lat"), (double)node.Attribute("lng")));

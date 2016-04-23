@@ -15,6 +15,7 @@ namespace NavigationResolver.DataModels
 
         List<SubGraph> subGraphs;
 
+        public SuperGraph() { }
 
         public SuperGraph(List<SubGraph> subGraphs, TravelMetric metric)
         {

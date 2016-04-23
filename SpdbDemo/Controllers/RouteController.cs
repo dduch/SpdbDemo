@@ -1,4 +1,6 @@
-﻿using NavigationResolver.Interfaces;
+﻿using NavigationResolver.DataModels;
+using NavigationResolver.DataProviders;
+using NavigationResolver.Interfaces;
 using NavigationResolver.Types;
 using System;
 using System.Collections.Generic;
@@ -12,18 +14,20 @@ namespace SpdbDemo.Controllers
     public class RouteController : ApiController
     {     
         private INetwork routeFinder;
-        private IGeoDataProvider networkBulider;
+        private IGeoDataProvider geoDataProvider;
 
-        public RouteController(INetwork routeFinder, IGeoDataProvider networkBulider)
+        public RouteController(INetwork routeFinder, IGeoDataProvider geoDataProvider)
         {
             this.routeFinder = routeFinder;
-            this.networkBulider = networkBulider;
+            this.geoDataProvider = geoDataProvider;
         }
 
-        [Route("api/Route/GetRoute")]
+        [Route("api/Route/FindRoute")]
         public IHttpActionResult FindRoute(Point point)
         {
-            return Json("OK");
+            geoDataProvider.GetStations();
+            IRoute route = geoDataProvider.GetRoute(new Point(52.2693319, 20.9833518), new Point(52.2184572, 21.0153582), RouteType.Cycle);
+            return Json(route.GetPoints().ToList());
         }
     }
 }

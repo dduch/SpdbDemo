@@ -57,22 +57,8 @@ FormModule.controller('FormController', ['$scope', 'sharedMapService','$http', f
                     }, function(response) {});
     },
 
-    $scope.OnSearchClickAction = function(){
-        $http({
-            method: 'GET',
-            url: CONST.NominatimSearch + $scope.navigation.start + CONST.FormatType
-        }).then(function successCallback(response) {
-            alert(response);
-            $scope.navigation.latitude = response.data[0].lat;
-            $scope.navigation.longitude = response.data[0].lon;
-            $scope.searchRoute();
-        }, function errorCallback(response) {
-            alert(response);
-        });
-    },
-
-    $scope.searchRoute = function(){
-        $http({
+    $scope.onSearchClickAction = function(){
+     $http({
             method: 'POST',
             url: window.location.origin + '/api/Route/FindRoute',
             data: {
@@ -80,10 +66,37 @@ FormModule.controller('FormController', ['$scope', 'sharedMapService','$http', f
                 Long: $scope.navigation.longitude
             }
         }).then(function successCallback(response) {
-            alert(response);
-            $scope.searchRoute();
+            $scope.drawRoute(response.data);
         }, function errorCallback(response) {
             alert(response);
         });
+    },
+
+    $scope.drawRoute = function(data){
+        var lineLayer = new OpenLayers.Layer.Vector("Route");
+        sharedMapService.map.addLayer(lineLayer);
+        sharedMapService.map.addControl(new OpenLayers.Control.DrawFeature(lineLayer, OpenLayers.Handler.Path));
+
+        var points = new Array();
+        var fromProjection = new OpenLayers.Projection("EPSG:4326");   // Transform from WGS 1984
+        var toProjection = new OpenLayers.Projection("EPSG:900913"); // to Spherical Mercator Projection
+
+        for (coordinate in data)
+        {
+            points.push(new OpenLayers.Geometry.Point(data[coordinate].Latitude, data[coordinate].Longitude)
+                .transform(fromProjection, toProjection));
+        }
+
+        var line = new OpenLayers.Geometry.LineString(points);
+
+        var style = {
+            strokeColor: '#ff0000',
+            strokeOpacity: 0.5,
+            strokeWidth: 5
+        };
+
+        var lineFeature = new OpenLayers.Feature.Vector(line, null, style);
+        lineLayer.addFeatures([lineFeature]);
     }
+
 }]);

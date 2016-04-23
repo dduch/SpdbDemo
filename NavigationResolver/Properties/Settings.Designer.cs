@@ -23,39 +23,30 @@ namespace NavigationResolver.Properties {
             }
         }
         
-        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("https://nextbike.net/maps/nextbike-official.xml")]
         public string MapOfStationsUrl {
             get {
                 return ((string)(this["MapOfStationsUrl"]));
             }
-            set {
-                this["MapOfStationsUrl"] = value;
-            }
         }
         
-        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("210")]
         public int WarsawId {
             get {
                 return ((int)(this["WarsawId"]));
             }
-            set {
-                this["WarsawId"] = value;
-            }
         }
         
-        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("http://www.yournavigation.org/api/1.0/gosmore.php?{0}")]
         public string RouteService {
             get {
                 return ((string)(this["RouteService"]));
-            }
-            set {
-                this["RouteService"] = value;
             }
         }
     }

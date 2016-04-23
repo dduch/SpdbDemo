@@ -14,13 +14,19 @@ namespace SpdbDemo
 {
     public class MvcApplication : System.Web.HttpApplication
     {
+        private readonly WindsorContainer container;
+
+        public MvcApplication()
+        {
+            this.container = new WindsorContainer();
+        }
+
         protected void Application_Start()
         {
-            var container = new WindsorContainer();
+            AreaRegistration.RegisterAllAreas();
             container.Install(FromAssembly.This());
             GlobalConfiguration.Configuration.DependencyResolver = new WindsorDependencyResolver(container.Kernel);
 
-            AreaRegistration.RegisterAllAreas();
             GlobalConfiguration.Configure(WebApiConfig.Register);
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);

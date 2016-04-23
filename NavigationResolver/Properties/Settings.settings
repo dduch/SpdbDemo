@@ -2,13 +2,13 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="NavigationResolver.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
-    <Setting Name="MapOfStationsUrl" Type="System.String" Scope="User">
+    <Setting Name="MapOfStationsUrl" Type="System.String" Scope="Application">
       <Value Profile="(Default)">https://nextbike.net/maps/nextbike-official.xml</Value>
     </Setting>
-    <Setting Name="WarsawId" Type="System.Int32" Scope="User">
+    <Setting Name="WarsawId" Type="System.Int32" Scope="Application">
       <Value Profile="(Default)">210</Value>
     </Setting>
-    <Setting Name="RouteService" Type="System.String" Scope="User">
+    <Setting Name="RouteService" Type="System.String" Scope="Application">
       <Value Profile="(Default)">http://www.yournavigation.org/api/1.0/gosmore.php?{0}</Value>
     </Setting>
   </Settings>

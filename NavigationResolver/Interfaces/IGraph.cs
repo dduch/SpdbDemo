@@ -8,7 +8,7 @@ namespace NavigationResolver.Interfaces
 {
     // Interface required by graph searching algorithms
     // Integer number are used to describe vertexes
-    interface IGraph
+    public interface IGraph
     {
         // Returns number of vertexes in graph
         // If result is n then graph has vertexes in 0..n-1

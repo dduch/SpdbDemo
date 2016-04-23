@@ -21,7 +21,8 @@ namespace SpdbDemo.DI
 
         public object GetService(Type serviceType)
         {
-            return this.container.HasComponent(serviceType) ? this.container.Resolve(serviceType) : null;
+            object obj = this.container.HasComponent(serviceType) ? this.container.Resolve(serviceType) : null;
+            return obj;
         }
 
         public IEnumerable<object> GetServices(Type serviceType)

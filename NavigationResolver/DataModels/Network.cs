@@ -17,7 +17,7 @@ namespace NavigationResolver.DataModels
         private IGeoDataProvider geoData;
         private TravelMetric metric;
 
-        private Network(SuperGraph graph, IGeoDataProvider geoData, TravelMetric metric)
+        public Network(SuperGraph graph, IGeoDataProvider geoData, TravelMetric metric)
         {
             this.graph = graph;
             this.geoData = geoData;

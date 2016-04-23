@@ -4,6 +4,7 @@ using Castle.Windsor;
 using NavigationResolver.DataModels;
 using NavigationResolver.DataProviders;
 using NavigationResolver.Interfaces;
+using NavigationResolver.Types;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,13 +18,14 @@ namespace SpdbDemo.DI
     {
         public void Install(IWindsorContainer container, IConfigurationStore store)
         {
-            container.Register(Classes.FromThisAssembly()
-                            .BasedOn<IHttpController>()
-                            .LifestylePerWebRequest());
+            container.Register(Classes.FromThisAssembly().BasedOn<ApiController>().LifestyleScoped());
+
             container.Register(
-               Component.For<IGeoDataProvider>().ImplementedBy<GeoDataProvider>(),
-               Component.For<INetwork>().ImplementedBy<Network>()
-            );
+                   Component.For<IGeoDataProvider>().ImplementedBy<GeoDataProvider>(),
+                   Component.For<INetwork>().ImplementedBy<Network>(),
+                   Component.For<SuperGraph>().ImplementedBy<SuperGraph>(),
+                   Component.For<TravelMetric>().ImplementedBy<TravelMetric>()
+                );
         }
     }
 }
