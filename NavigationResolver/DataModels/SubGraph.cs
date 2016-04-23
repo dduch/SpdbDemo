@@ -67,5 +67,10 @@ namespace NavigationResolver.DataModels
         {
             return Vertices[v].Neighbors;
         }
+
+        public int GetVertexByPosition(Point pos)
+        {
+            return Vertices.FindIndex(vrtx => vrtx.Position.Equals(pos));
+        }
     }
 }

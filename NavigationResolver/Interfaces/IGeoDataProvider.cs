@@ -23,5 +23,12 @@ namespace NavigationResolver.Interfaces
         /// Returns collection of Points which representin coordinates of available veturillo stations
         /// </summary>
         IEnumerable<Point> GetStations();
+
+        /// <summary>
+        /// Finds nearest veturilo station to given location.
+        /// <param name="p"> given location</param>
+        /// <param name="direction"> determines if route should be form p to station (direction == true) or reverse </param>
+        /// </summary>
+        IRoute GetRouteToNearestStation(Point p, bool direction);
     }
 }

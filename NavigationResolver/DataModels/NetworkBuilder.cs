@@ -99,6 +99,27 @@ namespace NavigationResolver.DataModels
             return subGraphs;
         }
 
+        public SuperGraph BuildSuperGraph(List<SubGraph> subGraphs)
+        {
+            // Create edge between each 2 subgraphs
+            for(int i = 0; i < subGraphs.Count; ++i)
+                for (int j = i + 1; j < subGraphs.Count; ++j)
+                {
+                    var Gi = subGraphs[i];
+                    var Gj = subGraphs[j];
+
+                    var connections = ConnectGraphs(Gi, Gj);
+
+                    Gi.NeighborGraphs.Add(j);
+                    Gj.NeighborGraphs.Add(i);
+
+                    Gi.IntergraphArchs.Add(connections.Item1);
+                    Gj.IntergraphArchs.Add(connections.Item2);
+                }
+
+            return new SuperGraph(subGraphs, metric);
+        }
+
         private Tuple<IRoute, IRoute> FindFreeRoutes(Point p1, Point p2)
         {
             var d = p1.GetDistanceTo(p2);
@@ -109,6 +130,60 @@ namespace NavigationResolver.DataModels
                 return null;
             var fromP2toP1 = geoData.GetRoute(p2, p1, RouteType.Cycle, maxFreeDistance);
             return new Tuple<IRoute, IRoute>(fromP1toP2, fromP2toP1);
+        }
+
+        private Tuple<IntergraphEdge, IntergraphEdge> ConnectGraphs(SubGraph g1, SubGraph g2)
+        {
+            var vuDists = new List<Tuple<int, int, double>>();
+
+            for (int i = 0; i < g1.Vertices.Count; ++i)
+                for (int j = 0; j < g2.Vertices.Count; ++j)
+                    vuDists.Add(new Tuple<int, int, double>(i, j, g1.Vertices[i].Position.GetDistanceTo(g2.Vertices[j].Position)));
+
+            vuDists = vuDists.OrderBy(x => x.Item3).ToList();
+
+            double bestG1G2ConnectionLength = Double.PositiveInfinity;
+            double bestG2G1ConnectionLength = Double.PositiveInfinity;
+
+            IntergraphEdge G1G2Connection = null;
+            IntergraphEdge G2G1Connection = null;
+
+            bool bestG1G2ConnectionFound = false;
+            bool bestG2G1ConnectionFound = false;
+
+            for (int i = 0; i < vuDists.Count; ++i)
+            {
+                var vu = vuDists[i];
+
+                if (vuDists[i].Item3 > bestG1G2ConnectionLength)
+                    bestG1G2ConnectionFound = true;
+                else
+                {
+                    IRoute r = geoData.GetRoute(g1.Vertices[vu.Item1].Position, g2.Vertices[vu.Item2].Position, RouteType.All);
+                    if (r.GetLength() < bestG1G2ConnectionLength)
+                    {
+                        G1G2Connection = new IntergraphEdge(vu.Item1, vu.Item2, r);
+                        bestG1G2ConnectionLength = r.GetLength();
+                    }
+                }
+
+                if (vuDists[i].Item3 > bestG2G1ConnectionLength)
+                    bestG2G1ConnectionFound = true;
+                else
+                {
+                    IRoute r = geoData.GetRoute(g2.Vertices[vu.Item2].Position, g1.Vertices[vu.Item1].Position, RouteType.All);
+                    if (r.GetLength() < bestG2G1ConnectionLength)
+                    {
+                        G2G1Connection = new IntergraphEdge(vu.Item2, vu.Item1, r);
+                        bestG2G1ConnectionLength = r.GetLength();
+                    }
+                }
+
+                if (bestG1G2ConnectionFound && bestG2G1ConnectionFound)
+                    break;
+            }
+
+            return new Tuple<IntergraphEdge,IntergraphEdge>(G1G2Connection, G2G1Connection);
         }
     }
 }
