@@ -16,6 +16,8 @@ namespace NavigationResolver.Types
             
         }
 
+        public Point() { }
+
         // Only for testing!!!
         //public double GetDistanceTo(Point p)
         //{
