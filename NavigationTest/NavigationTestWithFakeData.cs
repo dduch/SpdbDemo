@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Device;
 using NUnit.Framework;
-using NavigationResolver.DataModels;
-using NavigationResolver.Interfaces;
-using NavigationResolver.Types;
+using INavigation;
+using Navigation;
+using Navigation.DataModels;
+using Navigation.Network;
 
 namespace NavigationTest
 {
     [TestFixture]
-    public class NetworkTests
+    public class NavigationTestWithFakeData
     {
         private FakeGeoDataProvider fakeGeoData;
 
@@ -76,14 +76,14 @@ namespace NavigationTest
         {
             double baseVelocity = 1.666;
             TravelMetric testMetric;
-            NetworkBuilder builder;
+            GraphBuilder builder;
             List<SubGraph> graphs;
 
             // ---------- Test case 1 ----------
 
             testMetric = new TravelMetric(baseVelocity, 100.0);
-            builder = new NetworkBuilder(fakeGeoData, testMetric);
-            graphs = builder.BuildSubGraphs();
+            builder = new GraphBuilder(fakeGeoData, testMetric);
+            graphs = builder.BuildGraph().SubGraphs;
 
             Assert.AreEqual(3, graphs.Count);
             Assert.IsTrue(graphs.Exists(g => g.Vertices.Count == 12));
@@ -93,8 +93,8 @@ namespace NavigationTest
             // ---------- Test case 2 ----------
 
             testMetric = new TravelMetric(baseVelocity * 1.5, 100.0);
-            builder = new NetworkBuilder(fakeGeoData, testMetric);
-            graphs = builder.BuildSubGraphs();
+            builder = new GraphBuilder(fakeGeoData, testMetric);
+            graphs = builder.BuildGraph().SubGraphs;
 
             Assert.AreEqual(3, graphs.Count);
             Assert.IsTrue(graphs.Exists(g => g.Vertices.Count == 12));
@@ -104,8 +104,8 @@ namespace NavigationTest
             // ---------- Test case 3 ----------
 
             testMetric = new TravelMetric(baseVelocity * 2.0, 100.0);
-            builder = new NetworkBuilder(fakeGeoData, testMetric);
-            graphs = builder.BuildSubGraphs();
+            builder = new GraphBuilder(fakeGeoData, testMetric);
+            graphs = builder.BuildGraph().SubGraphs;
 
             Assert.AreEqual(2, graphs.Count);
             Assert.IsTrue(graphs.Exists(g => g.Vertices.Count == 18));
@@ -114,8 +114,8 @@ namespace NavigationTest
             // ---------- Test case 4 ----------
 
             testMetric = new TravelMetric(baseVelocity * 4.0, 100.0);
-            builder = new NetworkBuilder(fakeGeoData, testMetric);
-            graphs = builder.BuildSubGraphs();
+            builder = new GraphBuilder(fakeGeoData, testMetric);
+            graphs = builder.BuildGraph().SubGraphs;
 
             Assert.AreEqual(1, graphs.Count);
             Assert.IsTrue(graphs.Exists(g => g.Vertices.Count == 23));
@@ -123,8 +123,8 @@ namespace NavigationTest
             // ---------- Test case 4 ----------
 
             testMetric = new TravelMetric(baseVelocity * 0.375, 100.0);
-            builder = new NetworkBuilder(fakeGeoData, testMetric);
-            graphs = builder.BuildSubGraphs();
+            builder = new GraphBuilder(fakeGeoData, testMetric);
+            graphs = builder.BuildGraph().SubGraphs;
 
             Assert.AreEqual(20, graphs.Count);
             Assert.IsTrue(graphs.FindAll(g => g.Vertices.Count == 1).Count == 18);
@@ -137,14 +137,14 @@ namespace NavigationTest
         {
             double baseVelocity = 1.666;
             TravelMetric testMetric;
-            NetworkBuilder builder;
+            GraphBuilder builder;
             SuperGraph graph;
 
             // ---------- Test case 1 ----------
 
             testMetric = new TravelMetric(baseVelocity, 100.0);
-            builder = new NetworkBuilder(fakeGeoData, testMetric);
-            graph = builder.BuildSuperGraph(builder.BuildSubGraphs());
+            builder = new GraphBuilder(fakeGeoData, testMetric);
+            graph = builder.BuildGraph();
 
             Assert.AreEqual(3, graph.SubGraphs.Count);
             foreach (var subGraph in graph.SubGraphs)
@@ -153,8 +153,8 @@ namespace NavigationTest
             // ---------- Test case 2 ----------
 
             testMetric = new TravelMetric(baseVelocity * 1.5, 100.0);
-            builder = new NetworkBuilder(fakeGeoData, testMetric);
-            graph = builder.BuildSuperGraph(builder.BuildSubGraphs());
+            builder = new GraphBuilder(fakeGeoData, testMetric);
+            graph = builder.BuildGraph();
 
             Assert.AreEqual(3, graph.SubGraphs.Count);
             foreach (var subGraph in graph.SubGraphs)
@@ -163,8 +163,8 @@ namespace NavigationTest
             // ---------- Test case 3 ----------
 
             testMetric = new TravelMetric(baseVelocity * 2.0, 100.0);
-            builder = new NetworkBuilder(fakeGeoData, testMetric);
-            graph = builder.BuildSuperGraph(builder.BuildSubGraphs());
+            builder = new GraphBuilder(fakeGeoData, testMetric);
+            graph = builder.BuildGraph();
 
             Assert.AreEqual(2, graph.SubGraphs.Count);
             foreach (var subGraph in graph.SubGraphs)
@@ -173,8 +173,8 @@ namespace NavigationTest
             // ---------- Test case 4 ----------
 
             testMetric = new TravelMetric(baseVelocity * 4.0, 100.0);
-            builder = new NetworkBuilder(fakeGeoData, testMetric);
-            graph = builder.BuildSuperGraph(builder.BuildSubGraphs());
+            builder = new GraphBuilder(fakeGeoData, testMetric);
+            graph = builder.BuildGraph();
 
             Assert.AreEqual(1, graph.SubGraphs.Count);
             foreach (var subGraph in graph.SubGraphs)
@@ -183,8 +183,8 @@ namespace NavigationTest
             // ---------- Test case 4 ----------
 
             testMetric = new TravelMetric(baseVelocity * 0.375, 100.0);
-            builder = new NetworkBuilder(fakeGeoData, testMetric);
-            graph = builder.BuildSuperGraph(builder.BuildSubGraphs());
+            builder = new GraphBuilder(fakeGeoData, testMetric);
+            graph = builder.BuildGraph();
 
             Assert.AreEqual(20, graph.SubGraphs.Count);
             foreach (var subGraph in graph.SubGraphs)
@@ -192,74 +192,60 @@ namespace NavigationTest
         }
 
         [Test]
-        public void RoutingTest()
+        public void NavigationWithFakeData()
         {
             double baseVelocity = 1.666;
-            TravelMetric testMetric;
-            INetwork net;
+            INavigationResolver navigation = new NavigationResolver(fakeGeoData);
             Point start, end;
             IRoute result;
 
             // ---------- Test case 1 ----------
 
-            testMetric = new TravelMetric(baseVelocity, 100.0);
-            net = Network.Build(fakeGeoData, testMetric);
             start = ConvertCartesianToPoint(0.0, 0.0);
             end = ConvertCartesianToPoint(4.0, 4.0);
 
-            result = net.GetBestRoute(start, end);
+            result = navigation.GetBestRoute(start, end, baseVelocity);
             Assert.AreEqual(5 + 2, result.GetPoints().ToList().Count);
 
             // ---------- Test case 2 ----------
 
-            testMetric = new TravelMetric(baseVelocity, 100.0);
-            net = Network.Build(fakeGeoData, testMetric);
             start = ConvertCartesianToPoint(0.0, 10.0);
             end = ConvertCartesianToPoint(5.0, 11.0);
 
-            result = net.GetBestRoute(start, end);
+            result = navigation.GetBestRoute(start, end, baseVelocity);
             Assert.AreEqual(3 + 2, result.GetPoints().ToList().Count);
 
             // ---------- Test case 3 ----------
 
-            testMetric = new TravelMetric(baseVelocity, 100.0);
-            net = Network.Build(fakeGeoData, testMetric);
             start = ConvertCartesianToPoint(0.0, 0.0);
             end = ConvertCartesianToPoint(2.5, 12.0);
 
-            result = net.GetBestRoute(start, end);
+            result = navigation.GetBestRoute(start, end, baseVelocity);
             Assert.AreEqual(13 + 2, result.GetPoints().ToList().Count);
 
             // ---------- Test case 4 ----------
 
-            testMetric = new TravelMetric(baseVelocity*1.5, 100.0);
-            net = Network.Build(fakeGeoData, testMetric);
             start = ConvertCartesianToPoint(0.0, 0.0);
             end = ConvertCartesianToPoint(2.5, 12.0);
 
-            result = net.GetBestRoute(start, end);
+            result = navigation.GetBestRoute(start, end, baseVelocity * 1.5);
             Assert.AreEqual(4 + 2, result.GetPoints().ToList().Count);
 
             // ---------- Test case 5 ----------
 
-            testMetric = new TravelMetric(baseVelocity*2.0, 100.0);
-            net = Network.Build(fakeGeoData, testMetric);
-            start = ConvertCartesianToPoint(0.0, 0.0);
+            start = ConvertCartesianToPoint(0.0, 0.0 );
             end = ConvertCartesianToPoint(2.5, 12.0);
 
-            result = net.GetBestRoute(start, end);
+            result = navigation.GetBestRoute(start, end, baseVelocity * 2.0);
             Assert.AreEqual(8 + 2, result.GetPoints().ToList().Count);
 
             // ---------- Test case 6 ----------
 
-            testMetric = new TravelMetric(baseVelocity * 0.375, 100.0);
-            net = Network.Build(fakeGeoData, testMetric);
             start = ConvertCartesianToPoint(0.0, 0.0);
             end = ConvertCartesianToPoint(2.5, 12.0);
 
-            result = net.GetBestRoute(start, end);
+            result = navigation.GetBestRoute(start, end, baseVelocity * 0.375);
             Assert.AreEqual(3 + 2, result.GetPoints().ToList().Count);
-
 
         }
     }

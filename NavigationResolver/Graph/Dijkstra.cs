@@ -3,23 +3,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using NavigationResolver.Interfaces;
 using Priority_Queue;
 
-namespace NavigationResolver.Algorithms
+namespace Navigation.Graph
 {
-    class DijkstraNode : FastPriorityQueueNode
-    {
-        public int Vertex { get; }
-
-        public DijkstraNode(int v)
-        {
-            Vertex = v;
-        }
-    }
-
     class Dijkstra
     {
+        class DijkstraNode : FastPriorityQueueNode
+        {
+            public int Vertex { get; }
+
+            public DijkstraNode(int v)
+            {
+                Vertex = v;
+            }
+        }
+
         public static List<int> FindBestPath(IGraph graph, int src, int dst)
         {
             if (src == dst)

@@ -1,8 +1,13 @@
 ﻿using System.Collections.Generic;
-using NavigationResolver.Types;
+using INavigation;
 
-namespace NavigationResolver.Interfaces
+namespace Navigation.DataProviders
 {
+    public enum RouteType
+    {
+        All,
+        Cycle
+    }
     /// <summary>
     /// Connects to Open Street Maps and returns specified data
     /// </summary>

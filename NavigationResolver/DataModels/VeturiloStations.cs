@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NavigationResolver.DataModels
+namespace Navigation.DataModels
 {
     public class VeturiloStations
     {

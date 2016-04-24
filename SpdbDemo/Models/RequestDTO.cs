@@ -1,4 +1,4 @@
-﻿using NavigationResolver.Types;
+﻿using INavigation;
 using System;
 using System.Collections.Generic;
 using System.Linq;

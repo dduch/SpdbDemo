@@ -3,19 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using NavigationResolver.Interfaces;
-using NavigationResolver.Types;
 using System.Net;
-using NavigationResolver.Properties;
+using Navigation.Properties;
 using System.Xml;
 using System.Xml.Linq;
 using System.Globalization;
 using System.IO;
 using System.Xml.Serialization;
 using System.Web.Script.Serialization;
-using NavigationResolver.DataModels;
+using INavigation;
+using Navigation.DataModels;
 
-namespace NavigationResolver.DataProviders
+namespace Navigation.DataProviders
 {
     public class GeoDataProvider : IGeoDataProvider
     {
@@ -45,6 +44,8 @@ namespace NavigationResolver.DataProviders
 
         public IRoute GetRoute(Point source, Point destination, RouteType prefferedType, double lengthRestriction = double.PositiveInfinity)
         {
+            //return new Route(new List<Point>() { source, destination });
+
             Parameters["flat"] = source.Latitude.ToString(CultureInfo.InvariantCulture);
             Parameters["flon"] = source.Longitude.ToString(CultureInfo.InvariantCulture);
             Parameters["tlat"] = destination.Latitude.ToString(CultureInfo.InvariantCulture);
@@ -71,7 +72,7 @@ namespace NavigationResolver.DataProviders
                 foundedRoute.Add(new Point(coordinate[0], coordinate[1]));
             }
 
-            return new Route(foundedRoute);
+            return new Route(foundedRoute, Convert.ToDouble(route.properties.distance, CultureInfo.InvariantCulture));
         }
 
         public IRoute GetRouteToNearestStation(Point p, bool direction)
@@ -109,7 +110,7 @@ namespace NavigationResolver.DataProviders
                 coordinates.Add(new Point((double)node.Attribute("lat"), (double)node.Attribute("lng")));
             }
 
-            return coordinates;
+            return coordinates.Take(10);
         }
     }
 }

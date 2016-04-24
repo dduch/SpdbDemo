@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace NavigationResolver.Properties {
+namespace Navigation.Properties {
     using System;
     
     

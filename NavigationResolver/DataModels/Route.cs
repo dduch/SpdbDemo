@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using NavigationResolver.Interfaces;
-using NavigationResolver.Types;
+using INavigation;
 
-namespace NavigationResolver.DataModels
+namespace Navigation.DataModels
 {
     // Model of route consisting of sequence of points in space
     // In this model empty routes (with no elements) are allowed
-    public class Route : IRoute
+    class Route : IRoute
     {
         private List<Point> points;
         private double routeLength;
@@ -25,6 +24,14 @@ namespace NavigationResolver.DataModels
                 last = next;
             }
         }
+
+        public Route(List<Point> points, double routeLength)
+        {
+            this.points = points;
+            this.routeLength = routeLength;
+        }
+
+
 
         public IRoute Append(IRoute toAppend)
         {

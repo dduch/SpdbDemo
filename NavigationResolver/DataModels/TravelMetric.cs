@@ -1,34 +1,12 @@
 ﻿using System;
-using System.Device.Location;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace NavigationResolver.Types
+namespace Navigation.DataModels
 {
-    public enum RouteType
-    {
-        All,
-        Cycle
-    }
-
-    public class Point : GeoCoordinate
-    {
-        public Point(double latitude, double longitude) : base(latitude, longitude)
-        {
-            
-        }
-
-        public Point() { }
-
-        // Only for testing!!!
-        //public double GetDistanceTo(Point p)
-        //{
-        //    var xdiff = (Latitude - p.Latitude) * 1000.0;
-        //    var ydiff = (Longitude - p.Longitude) * 1000.0;
-        //    return Math.Sqrt(xdiff * xdiff + ydiff * ydiff);
-        //}
-    }
-
-    // Class containing basic configuration for creating graph
-    public class TravelMetric
+    class TravelMetric
     {
         // Cyclist average velocity in [m/s]
         public double Velocity { get; }
@@ -64,12 +42,11 @@ namespace NavigationResolver.Types
             FreeOfChargeTime = 20 * 60;
         }
 
-        public TravelMetric(double velocity, double changeTime)
+        public TravelMetric(double velocity, double changeTime = 2 * 60)
         {
             Velocity = velocity;
             ChangeTime = changeTime;
             FreeOfChargeTime = 20 * 60;
         }
-
     }
 }

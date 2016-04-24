@@ -93,7 +93,6 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Device" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Net.Http.Formatting, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.3\lib\net45\System.Net.Http.Formatting.dll</HintPath>
@@ -265,9 +264,13 @@
     <Content Include="Scripts\jquery-1.10.2.min.map" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\NavigationResolver\NavigationResolver.csproj">
+    <ProjectReference Include="..\INavigationResolver\INavigationResolver\INavigation.csproj">
+      <Project>{5c00f988-1181-4ca7-ad4b-30c842378049}</Project>
+      <Name>INavigation</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\NavigationResolver\Navigation.csproj">
       <Project>{35be1ec4-5d95-4f1c-ba54-d6fa8923e659}</Project>
-      <Name>NavigationResolver</Name>
+      <Name>Navigation</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
