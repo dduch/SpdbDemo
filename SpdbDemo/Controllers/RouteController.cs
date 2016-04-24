@@ -1,7 +1,4 @@
-﻿using NavigationResolver.DataModels;
-using NavigationResolver.DataProviders;
-using NavigationResolver.Interfaces;
-using NavigationResolver.Types;
+﻿using INavigation;
 using SpdbDemo.Models;
 using System;
 using System.Collections.Generic;
@@ -14,13 +11,11 @@ namespace SpdbDemo.Controllers
 {
     public class RouteController : ApiController
     {     
-        private INetwork routeFinder;
-        private IGeoDataProvider geoDataProvider;
+        private INavigationResolver routeFinder;
 
-        public RouteController(INetwork routeFinder, IGeoDataProvider geoDataProvider)
+        public RouteController(INavigationResolver routeFinder)
         {
             this.routeFinder = routeFinder;
-            this.geoDataProvider = geoDataProvider;
         }
 
         [Route("api/Route/FindRoute")]

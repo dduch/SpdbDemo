@@ -1,10 +1,9 @@
 ﻿using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
-using NavigationResolver.DataModels;
-using NavigationResolver.DataProviders;
-using NavigationResolver.Interfaces;
-using NavigationResolver.Types;
+using INavigation;
+using Navigation;
+using Navigation.DataProviders;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,10 +20,8 @@ namespace SpdbDemo.DI
             container.Register(Classes.FromThisAssembly().BasedOn<ApiController>().LifestyleScoped());
 
             container.Register(
-                   Component.For<IGeoDataProvider>().ImplementedBy<GeoDataProvider>(),
-                   Component.For<INetwork>().ImplementedBy<Network>(),
-                   Component.For<SuperGraph>().ImplementedBy<SuperGraph>(),
-                   Component.For<TravelMetric>().ImplementedBy<TravelMetric>()
+                   Component.For<INavigationResolver>().ImplementedBy<NavigationResolver>(),
+                   Component.For<IGeoDataProvider>().ImplementedBy<GeoDataProvider>()
                 );
         }
     }

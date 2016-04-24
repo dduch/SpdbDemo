@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
-using NavigationResolver.Types;
 
-namespace NavigationResolver.Interfaces
+namespace INavigation
 {
     public interface IRoute
     {

@@ -2,14 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using NavigationResolver.DataModels;
-using NavigationResolver.Interfaces;
-using NavigationResolver.Types;
+using INavigation;
+using Navigation.DataModels;
+using Navigation.Graph;
 
-namespace NavigationResolver.DataModels
+namespace Navigation.Network
 {
-    public class SuperGraph : IGraph
+    class SuperGraph : IGraph
     {
         TravelMetric metric;
 

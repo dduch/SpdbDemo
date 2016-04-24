@@ -3,15 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using NavigationResolver.DataModels;
-using NavigationResolver.Interfaces;
-using NavigationResolver.Types;
+using INavigation;
 
 /* Structures for organizing data in graphs */
 
-namespace NavigationResolver.DataModels
+namespace Navigation.Network
 {
-    public class Vertex
+    class Vertex
     {
         public Point Position;
         public List<int> Neighbors;
@@ -25,7 +23,7 @@ namespace NavigationResolver.DataModels
         }
     }
 
-    public class IntergraphEdge
+    class IntergraphEdge
     {
         public int StartVertex;
         public int EndVertex;

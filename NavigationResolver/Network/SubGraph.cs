@@ -3,13 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using NavigationResolver.DataModels;
-using NavigationResolver.Interfaces;
-using NavigationResolver.Types;
+using INavigation;
+using Navigation.Graph;
 
-namespace NavigationResolver.DataModels
+namespace Navigation.Network
 {
-    public class SubGraph : IGraph
+    class SubGraph : IGraph
     {
         double velocity;
 

@@ -3,28 +3,37 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using NavigationResolver.Interfaces;
-using NavigationResolver.Types;
+using INavigation;
+using Navigation.DataModels;
+using Navigation.DataProviders;
 
-namespace NavigationResolver.DataModels
+namespace Navigation.Network
 {
-    public class NetworkBuilder
+    class GraphBuilder
     {
+
         private IGeoDataProvider geoData;
 
         private TravelMetric metric;
 
         private double maxFreeDistance;
 
-        public NetworkBuilder(IGeoDataProvider geoData, TravelMetric metric)
+        public GraphBuilder(IGeoDataProvider geoData, TravelMetric metric)
         {
             this.geoData = geoData;
             this.metric = metric;
             maxFreeDistance = metric.FreeOfChargeTime * metric.Velocity;
         }
 
-        // Builds subgraphs of with 0 travel cost between each 2 vertices
-        public List<SubGraph> BuildSubGraphs()
+        public SuperGraph BuildGraph()
+        {
+            var subGraphs = BuildSubGraphs();
+            var superGraph = BuildSuperGraph(subGraphs);
+            return superGraph;
+        }
+
+        // Builds subgraphs with 0 travel cost between each 2 vertices
+        private List<SubGraph> BuildSubGraphs()
         {
             // Vertices which currently are not part of any graph
             var detachedVertices = geoData.GetStations().ToList();
@@ -99,7 +108,7 @@ namespace NavigationResolver.DataModels
             return subGraphs;
         }
 
-        public SuperGraph BuildSuperGraph(List<SubGraph> subGraphs)
+        private SuperGraph BuildSuperGraph(List<SubGraph> subGraphs)
         {
             // Create edge between each 2 subgraphs
             for(int i = 0; i < subGraphs.Count; ++i)

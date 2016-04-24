@@ -4,14 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NavigationResolver.DataModels
+namespace Navigation.DataModels
 {
-    public class VeturiloStations
+    class VeturiloStations
     {
         public StationInfo[] Stations { get; set; }
     }
 
-    public class StationInfo
+    class StationInfo
     {
         public string Localization { get; set; }
         public int? Stationnumber { get; set; }
