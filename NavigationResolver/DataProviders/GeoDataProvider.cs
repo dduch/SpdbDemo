@@ -61,7 +61,7 @@ namespace Navigation.DataProviders
 
         public IRoute GetRoute(Point source, Point destination, RouteType prefferedType, double lengthRestriction = double.PositiveInfinity)
         {
-            //return new Route(new List<Point>() { source, destination });
+            return new Route(new List<Point>() { source, destination });
 
             Parameters["flat"] = source.Latitude.ToString(CultureInfo.InvariantCulture);
             Parameters["flon"] = source.Longitude.ToString(CultureInfo.InvariantCulture);
@@ -108,7 +108,19 @@ namespace Navigation.DataProviders
                 } 
             }
 
-            return GetRoute(p, nearestStation, RouteType.Cycle);
+            IRoute route;
+            if (direction)
+            {
+                route =  GetRoute(p, nearestStation, RouteType.Cycle);
+                route.Append(new Route (new List<Point>() { nearestStation }));
+            }
+            else
+            {
+                route = new Route(new List<Point>() { nearestStation });
+                route.Append(GetRoute(nearestStation, p, RouteType.Cycle));
+            }
+            return route;
+            
         }
 
         public IEnumerable<Point> GetStations()
@@ -127,7 +139,7 @@ namespace Navigation.DataProviders
                 coordinates.Add(new Point((double)node.Attribute("lat"), (double)node.Attribute("lng")));
             }
 
-            return coordinates.Take(10);
+            return coordinates; //.Take(10);
         }
     }
 }
