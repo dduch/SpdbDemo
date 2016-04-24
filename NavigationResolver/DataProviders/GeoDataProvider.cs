@@ -13,6 +13,7 @@ using System.Xml.Serialization;
 using System.Web.Script.Serialization;
 using INavigation;
 using Navigation.DataModels;
+using Navigation;
 
 namespace Navigation.DataProviders
 {
@@ -33,7 +34,23 @@ namespace Navigation.DataProviders
             ["lang"] = "pl",
         };
 
+        private static Dictionary<KeyValuePair<int, int>, double> StationsRoutes = new Dictionary<KeyValuePair<int, int>, double>();
         private VeturiloStations veturiloStations;
+
+        static GeoDataProvider()
+        {
+            BinaryReader reader = new BinaryReader(new MemoryStream(Resources.stationsRoutesDB));
+
+            int count = Resources.stationsRoutesDB.Length;
+            while(count > 0)
+            {
+                int id1 = reader.ReadInt32();
+                int id2 = reader.ReadInt32();
+                double dist = reader.ReadDouble();
+                count -= 16;
+                StationsRoutes.Add(new KeyValuePair<int, int>(id1, id2), dist);
+            }
+        }
 
         public GeoDataProvider()
         {
