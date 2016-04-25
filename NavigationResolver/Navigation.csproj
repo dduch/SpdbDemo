@@ -55,13 +55,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DataModels\Station.cs" />
     <Compile Include="DataProviders\IGeoDataProvider.cs" />
+    <Compile Include="Graph\Cost.cs" />
     <Compile Include="Graph\Dijkstra.cs" />
-    <Compile Include="Network\GraphBuilder.cs" />
     <Compile Include="DataModels\Route.cs" />
-    <Compile Include="Network\SubGraph.cs" />
-    <Compile Include="Network\SuperGraph.cs" />
-    <Compile Include="Network\GraphStructures.cs" />
+    <Compile Include="DataModels\Network.cs" />
     <Compile Include="DataModels\TravelMetric.cs" />
     <Compile Include="DataModels\VeturiloStations.cs" />
     <Compile Include="DataProviders\GeoDataProvider.cs" />

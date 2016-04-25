@@ -24,7 +24,7 @@ namespace Navigation.Graph
             if (src == dst)
                 return new List<int>() { src };
 
-            int n = graph.AllVertexes();
+            int n = graph.VerticesCount();
             double[] dist = new double[n];
             int[] prev = new int[n];
             DijkstraNode[] nodes = new DijkstraNode[n];
@@ -56,7 +56,7 @@ namespace Navigation.Graph
 
                 foreach (var v in graph.Neighbors(u))
                 {
-                    var alt = dist[u] + graph.EdgeCost(u, v);
+                    var alt = dist[u] + graph.EdgeCost(u, v).ToDouble();
                     if (alt < dist[v])
                     {
                         dist[v] = alt;

@@ -17,7 +17,7 @@ namespace NavigationTest
         {
             IGeoDataProvider geoProvider = new GeoDataProvider();
             geoProvider.GetStations();
-            geoProvider.GetRoute(new Point(52.2693319, 20.9833518), new Point(52.2184572, 21.0153582), RouteType.Cycle);
+            geoProvider.GetRoute(new Point(52.2693319, 20.9833518), new Point(52.2184572, 21.0153582));
         }
     }
 }

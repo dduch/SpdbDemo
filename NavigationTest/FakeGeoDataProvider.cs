@@ -18,25 +18,46 @@ namespace NavigationTest
             this.locations = locations;
         }
 
-        public IRoute GetRoute(Point source, Point destination, RouteType prefferedType, double lengthRestriction = double.PositiveInfinity)
+        public int GetNearestStation(Point p)
+        {
+            var bestDistance = double.PositiveInfinity;
+            var closestStation = -1;
+            for (int i = 0; i < locations.Count(); ++i)
+            {
+                var currentDist = p.GetDistanceTo(locations[i]);
+                if (currentDist < bestDistance)
+                {
+                    closestStation = i;
+                    bestDistance = currentDist;
+                }
+            }
+
+            return closestStation;
+        }
+
+        public double GetPathLength(int startStation, int endStation)
+        {
+            return locations[startStation].GetDistanceTo(locations[endStation]);
+        }
+
+        public IRoute GetRoute(Point source, Point destination)
         {
             return new Route(new List<Point>() { source, destination });
         }
 
-        public IRoute GetRouteToNearestStation(Point p, bool direction)
+        IEnumerable<Station> IGeoDataProvider.GetStations()
         {
-            var locationsWithDist = locations.Select(loc => new Tuple<Point,double> (loc, loc.GetDistanceTo(p))).OrderBy(loc => loc.Item2); ;
-            var closest = locationsWithDist.First().Item1;
-
-            if (direction)
-                return new Route(new List<Point>() { p, closest });
-            else
-                return new Route(new List<Point>() { closest, p });
+            List<Station> stations = new List<Station>(locations.Count);
+            for(int i = 0; i < locations.Count; ++i)
+            {
+                stations.Add(new Station(i.ToString(), i, locations[i].Latitude, locations[i].Longitude));
+            }
+            return stations;
         }
 
-        public IEnumerable<Point> GetStations()
+        public int MapPositionToStation(Point pos)
         {
-            return locations;
+            return locations.FindIndex(loc => loc == pos);
         }
     }
 }

@@ -5,7 +5,6 @@ using NUnit.Framework;
 using INavigation;
 using Navigation;
 using Navigation.DataModels;
-using Navigation.Network;
 
 namespace NavigationTest
 {
@@ -72,180 +71,75 @@ namespace NavigationTest
         }
 
         [Test]
-        public void BuildSubGraph()
-        {
-            double baseVelocity = 1.666;
-            TravelMetric testMetric;
-            GraphBuilder builder;
-            List<SubGraph> graphs;
-
-            // ---------- Test case 1 ----------
-
-            testMetric = new TravelMetric(baseVelocity, 100.0);
-            builder = new GraphBuilder(fakeGeoData, testMetric);
-            graphs = builder.BuildGraph().SubGraphs;
-
-            Assert.AreEqual(3, graphs.Count);
-            Assert.IsTrue(graphs.Exists(g => g.Vertices.Count == 12));
-            Assert.IsTrue(graphs.Exists(g => g.Vertices.Count == 6));
-            Assert.IsTrue(graphs.Exists(g => g.Vertices.Count == 5));
-
-            // ---------- Test case 2 ----------
-
-            testMetric = new TravelMetric(baseVelocity * 1.5, 100.0);
-            builder = new GraphBuilder(fakeGeoData, testMetric);
-            graphs = builder.BuildGraph().SubGraphs;
-
-            Assert.AreEqual(3, graphs.Count);
-            Assert.IsTrue(graphs.Exists(g => g.Vertices.Count == 12));
-            Assert.IsTrue(graphs.Exists(g => g.Vertices.Count == 6));
-            Assert.IsTrue(graphs.Exists(g => g.Vertices.Count == 5));
-
-            // ---------- Test case 3 ----------
-
-            testMetric = new TravelMetric(baseVelocity * 2.0, 100.0);
-            builder = new GraphBuilder(fakeGeoData, testMetric);
-            graphs = builder.BuildGraph().SubGraphs;
-
-            Assert.AreEqual(2, graphs.Count);
-            Assert.IsTrue(graphs.Exists(g => g.Vertices.Count == 18));
-            Assert.IsTrue(graphs.Exists(g => g.Vertices.Count == 5));
-
-            // ---------- Test case 4 ----------
-
-            testMetric = new TravelMetric(baseVelocity * 4.0, 100.0);
-            builder = new GraphBuilder(fakeGeoData, testMetric);
-            graphs = builder.BuildGraph().SubGraphs;
-
-            Assert.AreEqual(1, graphs.Count);
-            Assert.IsTrue(graphs.Exists(g => g.Vertices.Count == 23));
-
-            // ---------- Test case 4 ----------
-
-            testMetric = new TravelMetric(baseVelocity * 0.375, 100.0);
-            builder = new GraphBuilder(fakeGeoData, testMetric);
-            graphs = builder.BuildGraph().SubGraphs;
-
-            Assert.AreEqual(20, graphs.Count);
-            Assert.IsTrue(graphs.FindAll(g => g.Vertices.Count == 1).Count == 18);
-            Assert.IsTrue(graphs.Exists(g => g.Vertices.Count == 2));
-            Assert.IsTrue(graphs.Exists(g => g.Vertices.Count == 3));
-        }
-
-        [Test]
-        public void BuildSuperGraph()
-        {
-            double baseVelocity = 1.666;
-            TravelMetric testMetric;
-            GraphBuilder builder;
-            SuperGraph graph;
-
-            // ---------- Test case 1 ----------
-
-            testMetric = new TravelMetric(baseVelocity, 100.0);
-            builder = new GraphBuilder(fakeGeoData, testMetric);
-            graph = builder.BuildGraph();
-
-            Assert.AreEqual(3, graph.SubGraphs.Count);
-            foreach (var subGraph in graph.SubGraphs)
-                Assert.AreEqual(2, subGraph.IntergraphArchs.Count);
-
-            // ---------- Test case 2 ----------
-
-            testMetric = new TravelMetric(baseVelocity * 1.5, 100.0);
-            builder = new GraphBuilder(fakeGeoData, testMetric);
-            graph = builder.BuildGraph();
-
-            Assert.AreEqual(3, graph.SubGraphs.Count);
-            foreach (var subGraph in graph.SubGraphs)
-                Assert.AreEqual(2, subGraph.IntergraphArchs.Count);
-
-            // ---------- Test case 3 ----------
-
-            testMetric = new TravelMetric(baseVelocity * 2.0, 100.0);
-            builder = new GraphBuilder(fakeGeoData, testMetric);
-            graph = builder.BuildGraph();
-
-            Assert.AreEqual(2, graph.SubGraphs.Count);
-            foreach (var subGraph in graph.SubGraphs)
-                Assert.AreEqual(1, subGraph.IntergraphArchs.Count);
-
-            // ---------- Test case 4 ----------
-
-            testMetric = new TravelMetric(baseVelocity * 4.0, 100.0);
-            builder = new GraphBuilder(fakeGeoData, testMetric);
-            graph = builder.BuildGraph();
-
-            Assert.AreEqual(1, graph.SubGraphs.Count);
-            foreach (var subGraph in graph.SubGraphs)
-                Assert.AreEqual(0, subGraph.IntergraphArchs.Count);
-
-            // ---------- Test case 4 ----------
-
-            testMetric = new TravelMetric(baseVelocity * 0.375, 100.0);
-            builder = new GraphBuilder(fakeGeoData, testMetric);
-            graph = builder.BuildGraph();
-
-            Assert.AreEqual(20, graph.SubGraphs.Count);
-            foreach (var subGraph in graph.SubGraphs)
-                Assert.AreEqual(19, subGraph.IntergraphArchs.Count);
-        }
-
-        [Test]
         public void NavigationWithFakeData()
         {
             double baseVelocity = 1.666;
             INavigationResolver navigation = new NavigationResolver(fakeGeoData);
             Point start, end;
-            IRoute result;
+            IRoute route;
+            List<int> path;
 
             // ---------- Test case 1 ----------
 
             start = ConvertCartesianToPoint(0.0, 0.0);
             end = ConvertCartesianToPoint(4.0, 4.0);
 
-            result = navigation.GetBestRoute(start, end, baseVelocity);
-            Assert.AreEqual(5 + 2, result.GetPoints().ToList().Count);
+            route = navigation.GetBestRoute(start, end, baseVelocity);
+            Assert.AreEqual(5 + 2, route.GetPoints().ToList().Count);
+
+            path = route.GetPoints().Select(p => fakeGeoData.MapPositionToStation(p)).ToList();
+
+
 
             // ---------- Test case 2 ----------
 
             start = ConvertCartesianToPoint(0.0, 10.0);
             end = ConvertCartesianToPoint(5.0, 11.0);
 
-            result = navigation.GetBestRoute(start, end, baseVelocity);
-            Assert.AreEqual(3 + 2, result.GetPoints().ToList().Count);
+            route = navigation.GetBestRoute(start, end, baseVelocity);
+            Assert.AreEqual(3 + 2, route.GetPoints().ToList().Count);
+
+            path = route.GetPoints().Select(p => fakeGeoData.MapPositionToStation(p)).ToList();
 
             // ---------- Test case 3 ----------
 
             start = ConvertCartesianToPoint(0.0, 0.0);
             end = ConvertCartesianToPoint(2.5, 12.0);
 
-            result = navigation.GetBestRoute(start, end, baseVelocity);
-            Assert.AreEqual(13 + 2, result.GetPoints().ToList().Count);
+            route = navigation.GetBestRoute(start, end, baseVelocity);
+            Assert.AreEqual(10 + 2, route.GetPoints().ToList().Count);
+
+            path = route.GetPoints().Select(p => fakeGeoData.MapPositionToStation(p)).ToList();
 
             // ---------- Test case 4 ----------
 
             start = ConvertCartesianToPoint(0.0, 0.0);
             end = ConvertCartesianToPoint(2.5, 12.0);
 
-            result = navigation.GetBestRoute(start, end, baseVelocity * 1.5);
-            Assert.AreEqual(4 + 2, result.GetPoints().ToList().Count);
+            route = navigation.GetBestRoute(start, end, baseVelocity * 1.5);
+            Assert.AreEqual(3 + 2, route.GetPoints().ToList().Count);
+
+            path = route.GetPoints().Select(p => fakeGeoData.MapPositionToStation(p)).ToList();
 
             // ---------- Test case 5 ----------
 
             start = ConvertCartesianToPoint(0.0, 0.0 );
             end = ConvertCartesianToPoint(2.5, 12.0);
 
-            result = navigation.GetBestRoute(start, end, baseVelocity * 2.0);
-            Assert.AreEqual(8 + 2, result.GetPoints().ToList().Count);
+            route = navigation.GetBestRoute(start, end, baseVelocity * 2.0);
+            Assert.AreEqual(2 + 2, route.GetPoints().ToList().Count);
+
+            path = route.GetPoints().Select(p => fakeGeoData.MapPositionToStation(p)).ToList();
 
             // ---------- Test case 6 ----------
 
             start = ConvertCartesianToPoint(0.0, 0.0);
             end = ConvertCartesianToPoint(2.5, 12.0);
 
-            result = navigation.GetBestRoute(start, end, baseVelocity * 0.375);
-            Assert.AreEqual(3 + 2, result.GetPoints().ToList().Count);
+            route = navigation.GetBestRoute(start, end, baseVelocity * 0.375);
+            Assert.AreEqual(2 + 2, route.GetPoints().ToList().Count);
+
+            path = route.GetPoints().Select(p => fakeGeoData.MapPositionToStation(p)).ToList();
 
         }
     }

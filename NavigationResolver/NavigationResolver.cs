@@ -7,28 +7,11 @@ using INavigation;
 using Navigation.Graph;
 using Navigation.DataModels;
 using Navigation.DataProviders;
-using Navigation.Network;
 
 namespace Navigation
 {
     public class NavigationResolver : INavigationResolver
     {
-        //private static volatile SuperGraph _graph = null;
-        //private static object syncRoot = new Object();
-
-        //private static SuperGraph GetGraph(TravelMetric builderMetric, IGeoDataProvider builderGeoData)
-        //{
-        //    if (_graph == null)
-        //        lock (syncRoot)
-        //        {
-        //            if (_graph == null)
-        //            {
-        //                var builder = new GraphBuilder(builderGeoData, builderMetric);
-        //                _graph = builder.BuildGraph();
-        //            }
-        //        }
-        //    return _graph;
-        //}
 
         private IGeoDataProvider geoData;
 
@@ -41,72 +24,28 @@ namespace Navigation
         public IRoute GetBestRoute(Point source, Point destination, double avgSpeed = 15.0)
         {
             var metric = new TravelMetric(avgSpeed);
-            var builder = new GraphBuilder(geoData, metric);
-            var graph = builder.BuildGraph();
-            return GetBestRouteInSuperGraph(graph, source, destination);
+
+            var net = new Network(geoData, metric);
+
+            var startStation = geoData.GetNearestStation(source);
+            var endStation = geoData.GetNearestStation(destination);
+            var startNode = net.MapStationToNode(startStation);
+            var endNode = net.MapStationToNode(endStation);
+
+            var path = Dijkstra.FindBestPath(net, startNode, endNode);
+            var waypoints = path.Select(nodeId => net.MapNodeToPoint(nodeId)).ToList();
+            // Ad start and end points
+            waypoints.Insert(0, source);
+            waypoints.Add(destination);
+
+            return ConstructRoute(waypoints);
         }
 
-        private IRoute GetBestRouteInSuperGraph(SuperGraph graph, Point source, Point destination)
-        { 
-            IRoute route = new Route(new List<Point>());
-
-            var startingRoute = geoData.GetRouteToNearestStation(source, true);
-            var endingRoute = geoData.GetRouteToNearestStation(destination, false);
-
-            var gsrcAndVsrc = graph.GetVertexByPosition(startingRoute.GetPoints().Last());
-            var gdstAndVdst = graph.GetVertexByPosition(endingRoute.GetPoints().First());
-
-            int gsrc = gsrcAndVsrc.Item1, gdst = gdstAndVdst.Item1, vsrc = gsrcAndVsrc.Item2, vdst = gdstAndVdst.Item2;
-
-            route.Append(startingRoute);
-
-            // Both destination and source in the same subgraph
-            if (gsrc == gdst)
-            {
-                route.Append(GetBestRouteInSubGraph(graph.SubGraphs[gsrc], vsrc, vdst));
-            }
-            // Ddestination and source in different subgraphs
-            else
-            {
-                var superPath = Dijkstra.FindBestPath(graph, gsrc, gdst);
-
-                var vfrom = vsrc;
-
-                for (int i = 0; i < superPath.Count - 1; ++i)
-                {
-                    var gCur = superPath[i];
-                    var gNxt = superPath[i + 1];
-                    var archToNxtId = graph.SubGraphs[gCur].NeighborGraphs.FindIndex(gid => gid == gNxt);
-                    var archToNxt = graph.SubGraphs[gCur].IntergraphArchs[archToNxtId];
-                    var vto = archToNxt.StartVertex;
-
-                    route.Append(GetBestRouteInSubGraph(graph.SubGraphs[gCur], vfrom, vto));
-
-                    route.Append(archToNxt.Arch);
-                    vfrom = archToNxt.EndVertex;
-                }
-
-                var gLast = superPath[superPath.Count - 1];
-                route.Append(GetBestRouteInSubGraph(graph.SubGraphs[gLast], vfrom, vdst));
-            }
-
-            route.Append(endingRoute);
-
-            return route;
-        }
-
-        private IRoute GetBestRouteInSubGraph(SubGraph g, int vsrc, int vdst)
+        private IRoute ConstructRoute(List<Point> waypoints)
         {
-            var path = Dijkstra.FindBestPath(g, vsrc, vdst);
-            var route = new Route(new List<Point>() { g.Vertices[path.First()].Position });
-
-            for (int i = 1; i < path.Count; ++i)
-            {
-                var from = path[i - 1];
-                var to = path[i];
-                var archId = g.Vertices[from].Neighbors.FindIndex(id => id == to);
-                route.Append(g.Vertices[from].Archs[archId]);
-            }
+            IRoute route = new Route(new List<Point>());
+            for(int i = 0; i < waypoints.Count - 1; ++i)
+                route.Append(geoData.GetRoute(waypoints[i], waypoints[i + 1]));
 
             return route;
         }

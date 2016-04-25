@@ -63,11 +63,6 @@ namespace Navigation.DataModels
             return this; 
         }
 
-        public double GetCycleLenght()
-        {
-            throw new NotImplementedException();
-        }
-
         public double GetLength()
         {
             return routeLength;

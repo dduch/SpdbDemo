@@ -59,7 +59,7 @@ namespace Navigation.DataProviders
             veturiloStations = (VeturiloStations)js.Deserialize(text, typeof(VeturiloStations));
         }
 
-        public IRoute GetRoute(Point source, Point destination, RouteType prefferedType, double lengthRestriction = double.PositiveInfinity)
+        public IRoute GetRoute(Point source, Point destination)
         {
             return new Route(new List<Point>() { source, destination });
 
@@ -92,8 +92,10 @@ namespace Navigation.DataProviders
             return new Route(foundedRoute, Convert.ToDouble(route.properties.distance, CultureInfo.InvariantCulture));
         }
 
-        public IRoute GetRouteToNearestStation(Point p, bool direction)
+        public int GetNearestStation(Point p)
         {
+            throw new NotImplementedException();
+
             double distance = Double.PositiveInfinity;
             Point nearestStation = null;
 
@@ -108,23 +110,23 @@ namespace Navigation.DataProviders
                 } 
             }
 
-            IRoute route;
-            if (direction)
-            {
-                route =  GetRoute(p, nearestStation, RouteType.Cycle);
-                route.Append(new Route (new List<Point>() { nearestStation }));
-            }
-            else
-            {
-                route = new Route(new List<Point>() { nearestStation });
-                route.Append(GetRoute(nearestStation, p, RouteType.Cycle));
-            }
-            return route;
+            //IRoute route;
+            //if (direction)
+            //{
+            //    route =  GetRoute(p, nearestStation, RouteType.Cycle);
+            //    route.Append(new Route (new List<Point>() { nearestStation }));
+            //}
+            //else
+            //{
+            //    route = new Route(new List<Point>() { nearestStation });
+            //    route.Append(GetRoute(nearestStation, p, RouteType.Cycle));
+            //}
+            //return route;
             
         }
 
-        public IEnumerable<Point> GetStations()
-        {
+        public IEnumerable<Station> GetStations()
+        { 
             XElement xdoc = XElement.Load(Settings.Default.MapOfStationsUrl);
             IEnumerable<XElement> stations = (from e in xdoc.Elements("country")
                                               where (string)e.Attribute("country") == "PL"
@@ -139,7 +141,13 @@ namespace Navigation.DataProviders
                 coordinates.Add(new Point((double)node.Attribute("lat"), (double)node.Attribute("lng")));
             }
 
-            return coordinates; //.Take(10);
+            //return coordinates;
+            throw new NotImplementedException();
+        }
+
+        public double GetPathLength(int startStation, int endStation)
+        {
+            throw new NotImplementedException();
         }
     }
 }
