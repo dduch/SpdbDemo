@@ -27,13 +27,15 @@ namespace Navigation
 
             var net = new Network(geoData, metric);
 
-            var startStation = geoData.GetNearestStation(source);
+            var startStation = geoData.GetNearestStation(source, true);
             var endStation = geoData.GetNearestStation(destination);
+            // For efficiency of graph algorithms we map stations numbers to indexes in nodes array
             var startNode = net.MapStationToNode(startStation);
             var endNode = net.MapStationToNode(endStation);
 
             var path = Dijkstra.FindBestPath(net, startNode, endNode);
             var waypoints = path.Select(nodeId => net.MapNodeToPoint(nodeId)).ToList();
+
             // Ad start and end points
             waypoints.Insert(0, source);
             waypoints.Add(destination);

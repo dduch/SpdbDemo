@@ -13,7 +13,6 @@ using System.Xml.Serialization;
 using System.Web.Script.Serialization;
 using INavigation;
 using Navigation.DataModels;
-using Navigation;
 
 namespace Navigation.DataProviders
 {
@@ -35,7 +34,12 @@ namespace Navigation.DataProviders
         };
 
         private static Dictionary<KeyValuePair<int, int>, double> StationsRoutes = new Dictionary<KeyValuePair<int, int>, double>();
-        private VeturiloStations veturiloStations;
+        //private VeturiloStations veturiloStations;
+        private List<Station> stationsList; 
+
+        // TODO: This must be used, because for the moment we do not handle all stations.
+        // When all stations are handled remove this dictionary
+        private static Dictionary<int, bool> handledStations = new Dictionary<int, bool>();
 
         static GeoDataProvider()
         {
@@ -49,6 +53,9 @@ namespace Navigation.DataProviders
                 double dist = reader.ReadDouble();
                 count -= 16;
                 StationsRoutes.Add(new KeyValuePair<int, int>(id1, id2), dist);
+
+                if (!handledStations.ContainsKey(id1))
+                    handledStations.Add(id1, true);
             }
         }
 
@@ -56,13 +63,37 @@ namespace Navigation.DataProviders
         {
             JavaScriptSerializer js = new JavaScriptSerializer();
             string text = Encoding.UTF8.GetString(Resources.stations);
-            veturiloStations = (VeturiloStations)js.Deserialize(text, typeof(VeturiloStations));
+            //veturiloStations = (VeturiloStations)js.Deserialize(text, typeof(VeturiloStations));
+
+            XElement xdoc = XElement.Load(Settings.Default.MapOfStationsUrl);
+            IEnumerable<XElement> stationsXml = (from e in xdoc.Elements("country")
+                                                 where (string)e.Attribute("country") == "PL"
+                                                 from c in e.Elements("city")
+                                                 where (int)c.Attribute("uid") == Settings.Default.WarsawId
+                                                 from p in c.Elements("place")
+                                                 select p).ToList();
+
+            stationsList = new List<Station>(stationsXml.Count());
+
+            foreach (XElement node in stationsXml)
+            {
+                var stationId = Convert.ToInt32(node.Attribute("number").Value, CultureInfo.InvariantCulture);
+                if (!handledStations.ContainsKey(stationId))
+                    continue;
+
+                stationsList.Add(new Station(
+                    node.Attribute("name").Value,
+                    stationId,
+                    Convert.ToDouble(node.Attribute("lat").Value, CultureInfo.InvariantCulture),
+                    Convert.ToDouble(node.Attribute("lng").Value, CultureInfo.InvariantCulture),
+                    node.Attribute("bikes").Value != "0" // TODO: I am not sure this handles all cases, if only someone can confirm this
+                ));
+            }
+
         }
 
         public IRoute GetRoute(Point source, Point destination)
         {
-            return new Route(new List<Point>() { source, destination });
-
             Parameters["flat"] = source.Latitude.ToString(CultureInfo.InvariantCulture);
             Parameters["flon"] = source.Longitude.ToString(CultureInfo.InvariantCulture);
             Parameters["tlat"] = destination.Latitude.ToString(CultureInfo.InvariantCulture);
@@ -92,62 +123,50 @@ namespace Navigation.DataProviders
             return new Route(foundedRoute, Convert.ToDouble(route.properties.distance, CultureInfo.InvariantCulture));
         }
 
-        public int GetNearestStation(Point p)
+        public int GetNearestStation(Point p, bool nonempty = false)
         {
-            throw new NotImplementedException();
 
-            double distance = Double.PositiveInfinity;
-            Point nearestStation = null;
+            double bestDistance = Double.PositiveInfinity;
+            int nearestStation = -1;
 
-            foreach(StationInfo station in veturiloStations.Stations)
+            foreach (var station in stationsList)
             {
-                Point dest = new Point(station.Latitude.Value, station.Longitude.Value);
-                double tempDist = p.GetDistanceTo(dest);
-                if (tempDist < distance)
+                if (nonempty && !station.Bikes)
+                    continue;
+
+                double tempDist = p.GetDistanceTo(station.Position);
+                if (tempDist < bestDistance)
                 {
-                    distance = tempDist;
-                    nearestStation = dest;
-                } 
+                    bestDistance = tempDist;
+                    nearestStation = station.Id;
+                }
             }
 
-            //IRoute route;
-            //if (direction)
+            //foreach(StationInfo station in veturiloStations.Stations)
             //{
-            //    route =  GetRoute(p, nearestStation, RouteType.Cycle);
-            //    route.Append(new Route (new List<Point>() { nearestStation }));
+            //    if (!handledStations.ContainsKey(station.Stationnumber ?? -1))
+            //        continue;
+
+            //    Point dest = new Point(station.Latitude.Value, station.Longitude.Value);
+            //    double tempDist = p.GetDistanceTo(dest);
+            //    if (tempDist < bestDistance && station.Stationnumber != null)
+            //    {
+            //        bestDistance = tempDist;
+            //        nearestStation = (int)station.Stationnumber;
+            //    } 
             //}
-            //else
-            //{
-            //    route = new Route(new List<Point>() { nearestStation });
-            //    route.Append(GetRoute(nearestStation, p, RouteType.Cycle));
-            //}
-            //return route;
-            
+
+            return nearestStation;   
         }
 
         public IEnumerable<Station> GetStations()
         { 
-            XElement xdoc = XElement.Load(Settings.Default.MapOfStationsUrl);
-            IEnumerable<XElement> stations = (from e in xdoc.Elements("country")
-                                              where (string)e.Attribute("country") == "PL"
-                                              from c in e.Elements("city")
-                                              where (int)c.Attribute("uid") == Settings.Default.WarsawId
-                                              from p in c.Elements("place")
-                                              select p).ToList();
-
-            List<Point> coordinates = new List<Point>();
-            foreach (XElement node in stations)
-            {
-                coordinates.Add(new Point((double)node.Attribute("lat"), (double)node.Attribute("lng")));
-            }
-
-            //return coordinates;
-            throw new NotImplementedException();
+            return stationsList;
         }
 
         public double GetPathLength(int startStation, int endStation)
         {
-            throw new NotImplementedException();
+            return StationsRoutes[new KeyValuePair<int, int>(startStation, endStation)];
         }
     }
 }

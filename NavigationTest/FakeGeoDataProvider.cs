@@ -18,7 +18,7 @@ namespace NavigationTest
             this.locations = locations;
         }
 
-        public int GetNearestStation(Point p)
+        public int GetNearestStation(Point p, bool nonempty = false)
         {
             var bestDistance = double.PositiveInfinity;
             var closestStation = -1;
@@ -50,7 +50,7 @@ namespace NavigationTest
             List<Station> stations = new List<Station>(locations.Count);
             for(int i = 0; i < locations.Count; ++i)
             {
-                stations.Add(new Station(i.ToString(), i, locations[i].Latitude, locations[i].Longitude));
+                stations.Add(new Station(i.ToString(), i, locations[i].Latitude, locations[i].Longitude, true));
             }
             return stations;
         }

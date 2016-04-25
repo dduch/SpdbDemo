@@ -12,12 +12,14 @@ namespace Navigation.DataModels
         public string Name { get; }
         public int Id { get; }
         public Point Position { get; }
+        public bool Bikes { get; }
 
-        public Station(string name, int id, double lat, double lon)
+        public Station(string name, int id, double lat, double lon, bool bikes)
         {
             Name = name;
             Id = id;
             Position = new Point(lat, lon);
+            Bikes = bikes;
         }
     }
 }

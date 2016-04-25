@@ -27,10 +27,10 @@ namespace Navigation.DataProviders
 
         /// <summary>
         /// Finds nearest veturilo station to given location.
-        /// <param name="p"> given location</param>
-        /// <param name="direction"> determines if route should be form p to station (direction == true) or reverse </param>
+        /// <param name="p"> given location </param>
+        /// <param name="nonempty"> determines if there must be some bicycles on station </param>
         /// </summary>
-        int GetNearestStation(Point p);
+        int GetNearestStation(Point p, bool nonempty = false);
 
 
         /// <summary>
