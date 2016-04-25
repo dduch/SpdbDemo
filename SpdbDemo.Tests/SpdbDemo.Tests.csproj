@@ -104,11 +104,11 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\INavigationResolver\INavigationResolver\INavigation.csproj">
+    <ProjectReference Include="..\INavigation\INavigation.csproj">
       <Project>{5c00f988-1181-4ca7-ad4b-30c842378049}</Project>
       <Name>INavigation</Name>
     </ProjectReference>
-    <ProjectReference Include="..\NavigationResolver\Navigation.csproj">
+    <ProjectReference Include="..\Navigation\Navigation.csproj">
       <Project>{35be1ec4-5d95-4f1c-ba54-d6fa8923e659}</Project>
       <Name>Navigation</Name>
     </ProjectReference>

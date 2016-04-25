@@ -96,7 +96,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\INavigationResolver\INavigationResolver\INavigation.csproj">
+    <ProjectReference Include="..\INavigation\INavigation.csproj">
       <Project>{5c00f988-1181-4ca7-ad4b-30c842378049}</Project>
       <Name>INavigation</Name>
     </ProjectReference>

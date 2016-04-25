@@ -72,7 +72,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\NavigationResolver\Navigation.csproj">
+    <ProjectReference Include="..\Navigation\Navigation.csproj">
       <Project>{35be1ec4-5d95-4f1c-ba54-d6fa8923e659}</Project>
       <Name>Navigation</Name>
     </ProjectReference>

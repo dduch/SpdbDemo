@@ -7,11 +7,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpdbDemo", "SpdbDemo\SpdbDe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpdbDemo.Tests", "SpdbDemo.Tests\SpdbDemo.Tests.csproj", "{E04331AA-13D1-4AEB-B430-AE68520B2D72}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Navigation", "NavigationResolver\Navigation.csproj", "{35BE1EC4-5D95-4F1C-BA54-D6FA8923E659}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Navigation", "Navigation\Navigation.csproj", "{35BE1EC4-5D95-4F1C-BA54-D6FA8923E659}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NavigationTest", "NavigationTest\NavigationTest.csproj", "{8CBE0A01-9573-4A60-B389-ACF6E5EC42AB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "INavigation", "INavigationResolver\INavigationResolver\INavigation.csproj", "{5C00F988-1181-4CA7-AD4B-30C842378049}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "INavigation", "INavigation\INavigation.csproj", "{5C00F988-1181-4CA7-AD4B-30C842378049}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LocalConncetionBaseBuilder", "LocalConncetionBaseBuilder\LocalConncetionBaseBuilder.csproj", "{24A38573-AAB2-40C1-BD26-0BC5D1AA1F79}"
 EndProject
