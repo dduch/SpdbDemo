@@ -50,7 +50,7 @@ namespace Navigation.Graph
                     // We reached destination, time to reconstruct the path
                     var path = new LinkedList<int>();
                     for (int v = u; v != -1; v = prev[v])
-                        path.AddFirst(v); //Add(v);
+                        path.AddFirst(v);
                     return path.ToList();
                 }
 
@@ -69,7 +69,7 @@ namespace Navigation.Graph
                 }
             }
 
-            throw new Exception("Path not found");
+            throw new Exception("Path does not exists!");
         }
     }
 }

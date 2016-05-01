@@ -65,11 +65,6 @@ namespace Navigation.DataModels
             return n;
         }
 
-        public int MapNodeToStation(int nodeId)
-        {
-            return nodes[nodeId].Id;
-        }
-
         public Point MapNodeToPoint(int nodeId)
         {
             return nodes[nodeId].Position;
@@ -80,7 +75,7 @@ namespace Navigation.DataModels
             for (int i = 0; i < nodes.Length; ++i)
                 if (nodes[i].Id == stationId)
                         return i;
-            return -1;
+            throw new ArgumentException("Unknown station id: " + stationId);
         }
     }
 }

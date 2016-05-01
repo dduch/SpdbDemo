@@ -66,6 +66,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="NavigationTestWithPerformaceData.cs" />
     <Compile Include="NavigationTestWithRealData.cs" />
     <Compile Include="DataProviderTest.cs" />
     <Compile Include="FakeGeoDataProvider.cs" />
