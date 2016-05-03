@@ -14,9 +14,9 @@ namespace NavigationTest
     class NavigationTestWithRealData
     {
         [Test]
-        public void TestNavigation()
+        public void BasicNavigationTest()
         {
-            double baseVelocity = 1.666;
+            double baseVelocity = 15.0;
             INavigationResolver navigation = new NavigationResolver(new GeoDataProvider());
             Point start, end;
             IRoute result;
