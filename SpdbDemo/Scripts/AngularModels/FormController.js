@@ -1,13 +1,13 @@
 ﻿///<reference path="FormModule.js" />
 
-FormModule.controller('FormController', ['$scope', 'sharedMapService','$http', function ($scope, sharedMapService, $http) {
+FormModule.controller('FormController', ['$scope', 'sharedMapService', '$http', function ($scope, sharedMapService, $http) {
     $scope.navigation = {
         start: '',
         destination: '',
         useMyLocation: false,
         latitude: undefined,
         longitude: undefined,
-        autocompleteData: function(query){
+        autocompleteData: function (query) {
             return $scope.querySearch(query);
         },
         selectedStartItem: undefined,
@@ -54,13 +54,13 @@ FormModule.controller('FormController', ['$scope', 'sharedMapService','$http', f
 
     $scope.querySearch = function (query) {
         return $http.get(CONST.NominatimSearch + query + CONST.FormatType)
-                    .then(function(response) {
+                    .then(function (response) {
                         return response.data;
-                    }, function(response) {});
+                    }, function (response) { });
     },
 
     $scope.reverseGeocoding = function () {
-        $http.get(CONST.NominatimReverse + 'lat='+$scope.navigation.latitude + '&lon=' + $scope.navigation.longitude + '&addressdetails=1')
+        $http.get(CONST.NominatimReverse + 'lat=' + $scope.navigation.latitude + '&lon=' + $scope.navigation.longitude + '&addressdetails=1')
                    .then(function (response) {
                        $scope.navigation.selectedStartItem = response.data;
                        $scope.navigation.selectedStartItem.display_name = response.data.address.road + ', ' +
@@ -78,30 +78,36 @@ FormModule.controller('FormController', ['$scope', 'sharedMapService','$http', f
                 latitude: $scope.navigation.selectedDestinationItem.lat,
                 longitude: $scope.navigation.selectedDestinationItem.lon,
             },
+            Speed: $scope.navigation.speed,
         }
 
-     $http({
+        $http({
             method: 'POST',
             url: window.location.origin + '/api/Route/FindRoute',
             data: JSON.stringify(requestDTO),
         }).then(function successCallback(response) {
+            for (var i = 0; i < sharedMapService.map.layers.length; ++i) {
+                if (sharedMapService.map.layers[i].name == "Route") {
+                    sharedMapService.map.removeLayer(sharedMapService.map.layers[i]);
+                    break;
+                }
+            }
             $scope.drawRoute(response.data);
         }, function errorCallback(response) {
             alert(response);
         });
     },
 
-    $scope.drawRoute = function(data){
+    $scope.drawRoute = function (data) {
         var lineLayer = new OpenLayers.Layer.Vector("Route");
         sharedMapService.map.addLayer(lineLayer);
         sharedMapService.map.addControl(new OpenLayers.Control.DrawFeature(lineLayer, OpenLayers.Handler.Path));
 
         var points = new Array();
-        var fromProjection = new OpenLayers.Projection("EPSG:4326"); 
-        var toProjection = new OpenLayers.Projection("EPSG:900913"); 
+        var fromProjection = new OpenLayers.Projection("EPSG:4326");
+        var toProjection = new OpenLayers.Projection("EPSG:900913");
 
-        for (coordinate in data)
-        {
+        for (coordinate in data) {
             points.push(new OpenLayers.Geometry.Point(data[coordinate].Latitude, data[coordinate].Longitude)
                 .transform(fromProjection, toProjection));
         }
@@ -109,7 +115,7 @@ FormModule.controller('FormController', ['$scope', 'sharedMapService','$http', f
         var line = new OpenLayers.Geometry.LineString(points);
 
         var style = {
-            strokeColor: '#ff0000',
+            strokeColor: '#0f4caa',
             strokeOpacity: 0.5,
             strokeWidth: 5
         };

@@ -216,7 +216,7 @@
     <Content Include="Scripts\angular-material\angular-material.js" />
     <Content Include="Scripts\angular-material\angular-material.min.js" />
     <Content Include="Scripts\angular-mocks.js" />
-    <Content Include="Scripts\angular-resource.js" />
+    <Content Include="Scripts\angular-aria\angular-resource.js" />
     <Content Include="Scripts\angular-resource.min.js" />
     <Content Include="Scripts\angular-route.js" />
     <Content Include="Scripts\angular.js" />
