@@ -19,7 +19,7 @@ namespace NavigationTest
             double baseVelocity = 15.0;
             INavigationResolver navigation = new NavigationResolver(new GeoDataProvider());
             Point start, end;
-            IRoute result;
+            NavigationResult result;
 
             // ---------- Test case 1 ----------
 

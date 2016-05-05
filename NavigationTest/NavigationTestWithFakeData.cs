@@ -76,7 +76,7 @@ namespace NavigationTest
             double baseVelocity = 1.666;
             INavigationResolver navigation = new NavigationResolver(fakeGeoData);
             Point start, end;
-            IRoute route;
+            Waypoint[] waypoints;
             List<int> path;
 
             // ---------- Test case 1 ----------
@@ -84,10 +84,10 @@ namespace NavigationTest
             start = ConvertCartesianToPoint(0.0, 0.0);
             end = ConvertCartesianToPoint(4.0, 4.0);
 
-            route = navigation.GetBestRoute(start, end, baseVelocity);
-            Assert.AreEqual(5 + 2, route.GetPoints().ToList().Count);
+            waypoints = navigation.GetBestRoute(start, end, baseVelocity).Waypoints;
+            Assert.AreEqual(5 + 2, waypoints.Length);
 
-            path = route.GetPoints().Select(p => fakeGeoData.MapPositionToStation(p)).ToList();
+            path = waypoints.Select(p => fakeGeoData.MapPositionToStation(p)).ToList();
 
 
 
@@ -96,50 +96,50 @@ namespace NavigationTest
             start = ConvertCartesianToPoint(0.0, 10.0);
             end = ConvertCartesianToPoint(5.0, 11.0);
 
-            route = navigation.GetBestRoute(start, end, baseVelocity);
-            Assert.AreEqual(3 + 2, route.GetPoints().ToList().Count);
+            waypoints = navigation.GetBestRoute(start, end, baseVelocity).Waypoints;
+            Assert.AreEqual(3 + 2, waypoints.Length);
 
-            path = route.GetPoints().Select(p => fakeGeoData.MapPositionToStation(p)).ToList();
+            path = waypoints.Select(p => fakeGeoData.MapPositionToStation(p)).ToList();
 
             // ---------- Test case 3 ----------
 
             start = ConvertCartesianToPoint(0.0, 0.0);
             end = ConvertCartesianToPoint(2.5, 12.0);
 
-            route = navigation.GetBestRoute(start, end, baseVelocity);
-            Assert.AreEqual(10 + 2, route.GetPoints().ToList().Count);
+            waypoints = navigation.GetBestRoute(start, end, baseVelocity).Waypoints;
+            Assert.AreEqual(10 + 2, waypoints.Length);
 
-            path = route.GetPoints().Select(p => fakeGeoData.MapPositionToStation(p)).ToList();
+            path = waypoints.Select(p => fakeGeoData.MapPositionToStation(p)).ToList();
 
             // ---------- Test case 4 ----------
 
             start = ConvertCartesianToPoint(0.0, 0.0);
             end = ConvertCartesianToPoint(2.5, 12.0);
 
-            route = navigation.GetBestRoute(start, end, baseVelocity * 1.5);
-            Assert.AreEqual(3 + 2, route.GetPoints().ToList().Count);
+            waypoints = navigation.GetBestRoute(start, end, baseVelocity * 1.5).Waypoints;
+            Assert.AreEqual(3 + 2, waypoints.Length);
 
-            path = route.GetPoints().Select(p => fakeGeoData.MapPositionToStation(p)).ToList();
+            path = waypoints.Select(p => fakeGeoData.MapPositionToStation(p)).ToList();
 
             // ---------- Test case 5 ----------
 
             start = ConvertCartesianToPoint(0.0, 0.0 );
             end = ConvertCartesianToPoint(2.5, 12.0);
 
-            route = navigation.GetBestRoute(start, end, baseVelocity * 2.0);
-            Assert.AreEqual(2 + 2, route.GetPoints().ToList().Count);
+            waypoints = navigation.GetBestRoute(start, end, baseVelocity * 2.0).Waypoints;
+            Assert.AreEqual(2 + 2, waypoints.Length);
 
-            path = route.GetPoints().Select(p => fakeGeoData.MapPositionToStation(p)).ToList();
+            path = waypoints.Select(p => fakeGeoData.MapPositionToStation(p)).ToList();
 
             // ---------- Test case 6 ----------
 
             start = ConvertCartesianToPoint(0.0, 0.0);
             end = ConvertCartesianToPoint(2.5, 12.0);
 
-            route = navigation.GetBestRoute(start, end, baseVelocity * 0.375);
-            Assert.AreEqual(2 + 2, route.GetPoints().ToList().Count);
+            waypoints = navigation.GetBestRoute(start, end, baseVelocity * 0.375).Waypoints;
+            Assert.AreEqual(2 + 2, waypoints.Length);
 
-            path = route.GetPoints().Select(p => fakeGeoData.MapPositionToStation(p)).ToList();
+            path = waypoints.Select(p => fakeGeoData.MapPositionToStation(p)).ToList();
 
         }
     }

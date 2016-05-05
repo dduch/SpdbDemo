@@ -81,7 +81,7 @@ FormModule.controller('FormController', ['$scope', 'sharedMapService', '$http', 
             Speed: $scope.navigation.speed,
         }
 
-        $http({
+     $http({
             method: 'POST',
             url: window.location.origin + '/api/Route/FindRoute',
             data: JSON.stringify(requestDTO),
@@ -104,8 +104,8 @@ FormModule.controller('FormController', ['$scope', 'sharedMapService', '$http', 
         sharedMapService.map.addControl(new OpenLayers.Control.DrawFeature(lineLayer, OpenLayers.Handler.Path));
 
         var points = new Array();
-        var fromProjection = new OpenLayers.Projection("EPSG:4326");
-        var toProjection = new OpenLayers.Projection("EPSG:900913");
+        var fromProjection = new OpenLayers.Projection("EPSG:4326"); 
+        var toProjection = new OpenLayers.Projection("EPSG:900913"); 
 
         for (coordinate in data) {
             points.push(new OpenLayers.Geometry.Point(data[coordinate].Latitude, data[coordinate].Longitude)

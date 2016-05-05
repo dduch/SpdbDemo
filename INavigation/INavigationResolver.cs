@@ -3,6 +3,6 @@ namespace INavigation
 {
     public interface INavigationResolver
     {
-        IRoute GetBestRoute(Point source, Point destination, double avgSpeed = 15.0);
+        NavigationResult GetBestRoute(Point source, Point destination, double avgSpeed = 15.0);
     }
 }

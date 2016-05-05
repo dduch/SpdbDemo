@@ -31,14 +31,14 @@ namespace NavigationTest
 
         private void MeasurePerformance(INavigationResolver nav, Point startPoint, Point endPoint, double speed)
         {
-            IRoute route;
+            NavigationResult res;
 
             var watch = Stopwatch.StartNew();
-            route = nav.GetBestRoute(startPoint, endPoint, speed);
+            res = nav.GetBestRoute(startPoint, endPoint, speed);
             watch.Stop();
 
             var executionTime = watch.ElapsedMilliseconds;
-            string msg = "Execution time: " + executionTime + " ms\nWaypoints: " + route.GetPoints().Count() + "\nRouteLength: " + route.GetLength() + "m";
+            string msg = "Execution time: " + executionTime + " ms\nWaypoints: " + res.Waypoints.Length + "\nRouteLength: " + res.RouteLength + "m";
             Assert.Pass(msg);
         }
 
