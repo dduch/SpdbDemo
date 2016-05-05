@@ -100,9 +100,9 @@ FormModule.controller('FormController', ['$scope', 'sharedMapService','$http', f
         var fromProjection = new OpenLayers.Projection("EPSG:4326"); 
         var toProjection = new OpenLayers.Projection("EPSG:900913"); 
 
-        for (coordinate in data)
+        for (coordinate in data.Waypoints)
         {
-            points.push(new OpenLayers.Geometry.Point(data[coordinate].Latitude, data[coordinate].Longitude)
+            points.push(new OpenLayers.Geometry.Point(data.Waypoints[coordinate].Latitude, data.Waypoints[coordinate].Longitude)
                 .transform(fromProjection, toProjection));
         }
 

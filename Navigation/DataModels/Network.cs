@@ -65,9 +65,9 @@ namespace Navigation.DataModels
             return n;
         }
 
-        public Point MapNodeToPoint(int nodeId)
+        public Station MapNodeToStation(int nodeId)
         {
-            return nodes[nodeId].Position;
+            return nodes[nodeId];
         }
 
         public int MapStationToNode(int stationId)

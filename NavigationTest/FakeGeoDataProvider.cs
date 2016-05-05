@@ -55,9 +55,10 @@ namespace NavigationTest
             return stations;
         }
 
-        public int MapPositionToStation(Point pos)
+        public int MapPositionToStation(Waypoint pos)
         {
-            return locations.FindIndex(loc => loc == pos);
+            var point = new Point(pos.Latitude, pos.Longitude);
+            return locations.FindIndex(loc => loc == point);
         }
     }
 }
