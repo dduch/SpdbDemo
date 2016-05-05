@@ -13,7 +13,8 @@ FormModule.controller('FormController', ['$scope', 'sharedMapService','$http', f
         selectedStartItem: undefined,
         selectedDestinationItem: undefined,
         startSearchText: "",
-        destinationSearchText: ""
+        destinationSearchText: "",
+        speed: 1,
     };
 
     angular.element(document).ready(function () {
@@ -38,6 +39,7 @@ FormModule.controller('FormController', ['$scope', 'sharedMapService','$http', f
                         break;
                     }
                 }
+                $scope.reverseGeocoding();
             });
         }
         else {
@@ -56,6 +58,15 @@ FormModule.controller('FormController', ['$scope', 'sharedMapService','$http', f
                         return response.data;
                     }, function(response) {});
     },
+
+    $scope.reverseGeocoding = function () {
+        $http.get(CONST.NominatimReverse + 'lat='+$scope.navigation.latitude + '&lon=' + $scope.navigation.longitude + '&addressdetails=1')
+                   .then(function (response) {
+                       $scope.navigation.selectedStartItem = response.data;
+                       $scope.navigation.selectedStartItem.display_name = response.data.address.road + ', ' +
+                           response.data.address.house_number + ', ' + response.data.address.suburb + ', ' + response.data.address.city;
+                   }, function (response) { });
+    }
 
     $scope.onSearchClickAction = function () {
         var requestDTO = {

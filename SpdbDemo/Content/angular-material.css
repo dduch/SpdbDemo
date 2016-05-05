@@ -2001,8 +2001,8 @@ md-icon {
   display: inline-block;
   vertical-align: middle;
   fill: currentColor;
-  height: 24px;
-  width: 24px; }
+  height: 38px;
+  width: 38px; }
   md-icon svg {
     pointer-events: none;
     display: block; }
@@ -14948,7 +14948,7 @@ md-tooltip {
   -webkit-flex: 1 1 75%;
       -ms-flex: 1 1 75%;
           flex: 1 1 75%;
-  max-width: 75%;
+  max-width: 100%;
   max-height: 100%;
   box-sizing: border-box; }
 

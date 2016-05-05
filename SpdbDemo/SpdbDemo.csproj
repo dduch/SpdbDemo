@@ -199,6 +199,11 @@
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
+    <Content Include="Resources\bike32.png" />
+    <Content Include="Resources\biker.svg" />
+    <Content Include="Resources\biker48.svg" />
+    <Content Include="Resources\location.svg" />
+    <Content Include="Resources\location48.svg" />
     <Content Include="Resources\start.png" />
     <Content Include="Resources\stop.png" />
     <Content Include="Scripts\ai.0.15.0-build58334.js" />

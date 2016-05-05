@@ -14,7 +14,7 @@ FormModule.factory('sharedMapService', function () {
                 new OpenLayers.Control.Attribution()],
             maxExtent: new OpenLayers.Bounds(-20037508.34, -20037508.34, 20037508.34, 20037508.34),
             maxResolution: 156543.0399,
-            numZoomLevels: 19,
+            numZoomLevels: 18,
             units: 'm',
             projection: new OpenLayers.Projection("EPSG:900913"),
             displayProjection: new OpenLayers.Projection("EPSG:4326")

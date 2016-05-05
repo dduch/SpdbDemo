@@ -1,6 +1,8 @@
 ﻿body {
-    padding-top: 50px;
+    padding-top: 60px;
     padding-bottom: 20px;
+    padding-left: 5%;
+    padding-right: 5%;
 }
 
 /* Set padding to keep content from hitting the edges */
@@ -20,7 +22,8 @@
 input,
 select,
 textarea {
-    max-width: 400px;
+    max-width: 470px;
+    max-height: 60px;
 }
 
 .pac-container:after{
