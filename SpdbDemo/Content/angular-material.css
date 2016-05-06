@@ -1360,6 +1360,7 @@ md-bottom-sheet {
 md-dialog {
   opacity: 0;
   min-width: 240px;
+  min-height: 100px;
   max-width: 80%;
   max-height: 80%;
   position: relative;
@@ -1432,7 +1433,7 @@ md-dialog {
     margin-bottom: 0;
     padding-right: 8px;
     padding-left: 16px;
-    min-height: 52px;
+    min-height: 100px;
     overflow: hidden; }
     md-dialog .md-actions .md-button, md-dialog md-dialog-actions .md-button {
       margin-bottom: 8px;

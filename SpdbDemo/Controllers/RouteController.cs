@@ -23,8 +23,8 @@ namespace SpdbDemo.Controllers
         {
             try
             {
-                IRoute route = routeFinder.GetBestRoute(request.StartPosition, request.DestinationPosition, request.Speed);
-                return Json(route.GetPoints().ToList());
+                NavigationResult route = routeFinder.GetBestRoute(request.StartPosition, request.DestinationPosition, request.Speed);
+                return Json(route);
             }
             catch(Exception)
             {

@@ -8,13 +8,26 @@
                 <div class="FlexItem layout-column" layout="column" layout-align="left">
                     <div>
                         <div class="md-block">
-                            <md-icon la md-svg-src="~/Resources/location48.svg"></md-icon>
-                            <span> Use my location</span>
-                            <span>
-                                <md-switch class="md-primary" ng-change="onUseMyLocationChange()"
-                                           ng-model="navigation.useMyLocation">
-                                </md-switch>
-                            </span>
+                            <table>
+                                <tr>
+                                    <td>
+                                        <md-icon la md-svg-src="~/Resources/location48.svg"></md-icon>
+                                    </td>
+                                    <td width="3px">
+                                    </td>
+                                    <td>
+                                        <span> Use my location</span>
+                                    </td>
+                                    <td width="115px"></td>
+                                    <td>
+                                        <span>
+                                            <md-switch class="md-primary" ng-change="onUseMyLocationChange()"
+                                                       ng-model="navigation.useMyLocation">
+                                            </md-switch>
+                                        </span>
+                                    </td>
+                                </tr>
+                            </table>
                         </div>
                     </div>
                 </div>
@@ -39,7 +52,7 @@
             </md-content>
         </md-card>
         <md-card flex="75">
-            <div class="FlexItem layout-row" layout="row">
+            <div class="FlexItem layout-row" layout="row" style="max-height: 70px;">
                 <div>
                     <img src="~/Resources/start.png">
                 </div>
@@ -91,5 +104,15 @@
                 <div id="map_canvas" style="height: 510px; position: relative"></div>
             </md-card-content>
         </md-card>
+        <script type="text/ng-template" id="dialog1.tmpl.html">
+            <div align="center">
+                <md-dialog ng-cloak style="font-size: 18px">
+                    Searching best route...
+                    <md-dialog-actions>
+                        <md-progress-circular md-mode="indeterminate" style="transform: translate(-170%, 5%) scale(2.5); width: 50px; height: 50px;"></md-progress-circular>
+                    </md-dialog-actions>
+                </md-dialog>
+            </div>
+        </script>
     </div>
 </div>

@@ -1,6 +1,6 @@
 ﻿///<reference path="FormModule.js" />
 
-FormModule.controller('FormController', ['$scope', 'sharedMapService', '$http', function ($scope, sharedMapService, $http) {
+FormModule.controller('FormController', ['$scope', 'sharedMapService', '$http', '$mdDialog', '$mdMedia', function ($scope, sharedMapService, $http, $mdDialog, $mdMedia) {
     $scope.navigation = {
         start: '',
         destination: '',
@@ -15,6 +15,17 @@ FormModule.controller('FormController', ['$scope', 'sharedMapService', '$http', 
         startSearchText: "",
         destinationSearchText: "",
         speed: 1,
+    };
+
+    $scope.showAdvanced = function (ev) {
+        $mdDialog.show({
+            controller: DialogController,
+            templateUrl: 'dialog1.tmpl.html',
+            parent: angular.element(document.body),
+            targetEvent: ev
+        })
+        .then(function (answer) {
+        }, function () {});
     };
 
     angular.element(document).ready(function () {
@@ -93,9 +104,12 @@ FormModule.controller('FormController', ['$scope', 'sharedMapService', '$http', 
                 }
             }
             $scope.drawRoute(response.data);
+            $mdDialog.hide();
         }, function errorCallback(response) {
             alert(response);
         });
+
+     $scope.showAdvanced();
     },
 
     $scope.drawRoute = function (data) {
@@ -107,21 +121,77 @@ FormModule.controller('FormController', ['$scope', 'sharedMapService', '$http', 
         var fromProjection = new OpenLayers.Projection("EPSG:4326"); 
         var toProjection = new OpenLayers.Projection("EPSG:900913"); 
 
-        for (coordinate in data) {
-            points.push(new OpenLayers.Geometry.Point(data[coordinate].Latitude, data[coordinate].Longitude)
+        for (coordinate in data.Waypoints) {
+            points.push(new OpenLayers.Geometry.Point(data.Waypoints[coordinate].Latitude, data.Waypoints[coordinate].Longitude)
                 .transform(fromProjection, toProjection));
         }
 
         var line = new OpenLayers.Geometry.LineString(points);
 
         var style = {
-            strokeColor: '#0f4caa',
+            strokeColor: '#09295a',
             strokeOpacity: 0.5,
             strokeWidth: 5
         };
 
         var lineFeature = new OpenLayers.Feature.Vector(line, null, style);
         lineLayer.addFeatures([lineFeature]);
+        drawMarkers(data);
+    },
+
+    drawMarkers = function (data) {
+        for (var i = 0; i < sharedMapService.map.layers.length; ++i) {
+            if (sharedMapService.map.layers[i].name == "Markers") {
+                sharedMapService.map.layers[i].clearMarkers();
+                break;
+            }
+        }
+
+        if (data.Waypoints[0].Latitude != data.Waypoints[data.Stations[0].WaypointIndex].Latitude
+            && data.Waypoints[0].Longitude != data.Waypoints[data.Stations[0].WaypointIndex].Longitude) {
+            addMarkerToLayer(data.Waypoints[0].Latitude, data.Waypoints[0].Longitude, '/Resources/startMarker48.png')
+        }
+
+        if (data.Waypoints[data.Waypoints.length - 1].Latitude != data.Waypoints[data.Stations[data.Stations.length - 1].WaypointIndex].Latitude
+            && data.Waypoints[data.Waypoints.length - 1].Longitude != data.Waypoints[data.Stations[data.Stations.length - 1].WaypointIndex].Longitude) {
+            addMarkerToLayer(data.Waypoints[data.Waypoints.length - 1].Latitude, data.Waypoints[data.Waypoints.length - 1].Longitude, '/Resources/stopMarker48.png')
+        }
+
+        for(station in data.Stations){
+            var lat = data.Waypoints[data.Stations[station].WaypointIndex].Latitude;
+            var lon = data.Waypoints[data.Stations[station].WaypointIndex].Longitude;
+            addMarkerToLayer(lat, lon, '/Resources/stationMarker48.png')
+        }
+    },
+
+    addMarkerToLayer = function(lat, lon, iconPath){
+        var fromProjection = new OpenLayers.Projection("EPSG:4326");   // Transform from WGS 1984
+        var toProjection = new OpenLayers.Projection("EPSG:900913"); // to Spherical Mercator Proj
+        var position = new OpenLayers.LonLat(lat, lon).transform(fromProjection, toProjection);
+        var size = new OpenLayers.Size(48, 48);
+        var offset = new OpenLayers.Pixel(-(size.w / 2), -size.h);
+        var icon = new OpenLayers.Icon(iconPath, size, offset);
+
+        for (var i = 0; i < sharedMapService.map.layers.length; ++i) {
+            if (sharedMapService.map.layers[i].name == "Markers") {
+                sharedMapService.map.layers[i].addMarker(new OpenLayers.Marker(position, icon));
+                break;
+            }
+        }
     }
 
 }]);
+
+function DialogController($scope, $mdDialog) {
+    $scope.hide = function () {
+        $mdDialog.hide();
+    };
+
+    $scope.cancel = function () {
+        $mdDialog.cancel();
+    };
+
+    $scope.answer = function (answer) {
+        $mdDialog.hide();
+    };
+}

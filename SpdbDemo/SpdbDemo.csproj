@@ -205,7 +205,16 @@
     <Content Include="Resources\location.svg" />
     <Content Include="Resources\location48.svg" />
     <Content Include="Resources\start.png" />
+    <Content Include="Resources\startMaker64.png" />
+    <Content Include="Resources\startMarker.png" />
+    <Content Include="Resources\startMarker48.png" />
+    <Content Include="Resources\stationMarker.png" />
+    <Content Include="Resources\stationMarker48.png" />
+    <Content Include="Resources\stationMarker64.png" />
     <Content Include="Resources\stop.png" />
+    <Content Include="Resources\stopMarker.png" />
+    <Content Include="Resources\stopMarker48.png" />
+    <Content Include="Resources\stopMarker64.png" />
     <Content Include="Scripts\ai.0.15.0-build58334.js" />
     <Content Include="Scripts\ai.0.15.0-build58334.min.js" />
     <Content Include="Scripts\angular-animate\angular-animate.js" />
@@ -215,6 +224,7 @@
     <Content Include="Scripts\angular-material\angular-material-mocks.js" />
     <Content Include="Scripts\angular-material\angular-material.js" />
     <Content Include="Scripts\angular-material\angular-material.min.js" />
+    <Content Include="Scripts\angular-messages.js" />
     <Content Include="Scripts\angular-mocks.js" />
     <Content Include="Scripts\angular-aria\angular-resource.js" />
     <Content Include="Scripts\angular-resource.min.js" />

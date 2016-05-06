@@ -1,6 +1,6 @@
 ﻿///<reference path="Constants.js" />
 
-var FormModule = angular.module('FormApp', ['ngMaterial']);
+var FormModule = angular.module('FormApp', ['ngMaterial', 'ngMessages']);
 
 FormModule.factory('sharedMapService', function () {
     var sharedMap = {};
