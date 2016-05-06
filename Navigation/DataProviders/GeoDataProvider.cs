@@ -13,6 +13,7 @@ using System.Xml.Serialization;
 using System.Web.Script.Serialization;
 using INavigation;
 using Navigation.DataModels;
+using NavigationResolver.Properties;
 
 namespace Navigation.DataProviders
 {
@@ -69,7 +70,8 @@ namespace Navigation.DataProviders
             IEnumerable<XElement> stationsXml = (from e in xdoc.Elements("country")
                                                  where (string)e.Attribute("country") == "PL"
                                                  from c in e.Elements("city")
-                                                 where (int)c.Attribute("uid") == Settings.Default.WarsawId
+                                                 where (int)c.Attribute("uid") == Settings.Default.WarsawId ||
+                                                    (int)c.Attribute("uid") == Settings.Default.BemowoId
                                                  from p in c.Elements("place")
                                                  select p).ToList();
 

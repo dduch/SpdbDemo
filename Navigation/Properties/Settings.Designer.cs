@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Navigation.Properties {
+namespace NavigationResolver.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
@@ -47,6 +47,15 @@ namespace Navigation.Properties {
         public string RouteService {
             get {
                 return ((string)(this["RouteService"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("197")]
+        public int BemowoId {
+            get {
+                return ((int)(this["BemowoId"]));
             }
         }
     }

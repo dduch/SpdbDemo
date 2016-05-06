@@ -50,7 +50,7 @@ namespace NavigationTest
             Point p2 = new Point(52.35, 21.25);
             int stationsCount = 250;
             FakeGeoDataProvider fakeGeoData = new FakeGeoDataProvider(GenerateRandomLocations(p1, p2, stationsCount));
-            INavigationResolver navigation = new NavigationResolver(fakeGeoData);
+            INavigationResolver navigation = new Navigation.NavigationResolver(fakeGeoData);
 
             MeasurePerformance(navigation, p1, p2, speed);
         }

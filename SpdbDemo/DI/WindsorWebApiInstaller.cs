@@ -20,7 +20,7 @@ namespace SpdbDemo.DI
             container.Register(Classes.FromThisAssembly().BasedOn<ApiController>().LifestyleScoped());
 
             container.Register(
-                   Component.For<INavigationResolver>().ImplementedBy<NavigationResolver>(),
+                   Component.For<INavigationResolver>().ImplementedBy<Navigation.NavigationResolver>(),
                    Component.For<IGeoDataProvider>().ImplementedBy<GeoDataProvider>()
                 );
         }
