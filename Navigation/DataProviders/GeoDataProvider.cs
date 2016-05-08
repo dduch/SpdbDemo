@@ -13,7 +13,6 @@ using System.Xml.Serialization;
 using System.Web.Script.Serialization;
 using INavigation;
 using Navigation.DataModels;
-using NavigationResolver.Properties;
 
 namespace Navigation.DataProviders
 {
@@ -25,7 +24,7 @@ namespace Navigation.DataProviders
             ["flon"] = "",
             ["tlat"] = "",
             ["tlon"] = "pl",
-            ["v"] = "",
+            ["v"] = "bicycle",
             ["fast"] = "0",
             ["format"] = "geojson",
             ["geometry"] = "1",

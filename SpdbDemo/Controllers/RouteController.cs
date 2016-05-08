@@ -26,7 +26,7 @@ namespace SpdbDemo.Controllers
                 NavigationResult route = routeFinder.GetBestRoute(request.StartPosition, request.DestinationPosition, request.Speed);
                 return Json(route);
             }
-            catch(Exception)
+            catch(Exception ex)
             {
                 return null;
             }

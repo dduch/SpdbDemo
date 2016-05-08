@@ -7,8 +7,8 @@
     <ProjectGuid>{5C00F988-1181-4CA7-AD4B-30C842378049}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>INavigationResolver</RootNamespace>
-    <AssemblyName>INavigationResolver</AssemblyName>
+    <RootNamespace>INavigation</RootNamespace>
+    <AssemblyName>INavigation</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

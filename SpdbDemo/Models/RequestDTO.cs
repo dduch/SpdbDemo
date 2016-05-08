@@ -12,6 +12,6 @@ namespace SpdbDemo.Models
 
         public Point DestinationPosition { get; set; }
 
-        public int Speed { get; set; }
+        public double Speed { get; set; }
     }
 }

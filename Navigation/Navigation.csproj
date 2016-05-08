@@ -7,8 +7,8 @@
     <ProjectGuid>{35BE1EC4-5D95-4F1C-BA54-D6FA8923E659}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>NavigationResolver</RootNamespace>
-    <AssemblyName>NavigationResolver</AssemblyName>
+    <RootNamespace>Navigation</RootNamespace>
+    <AssemblyName>Navigation</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
