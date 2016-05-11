@@ -64,9 +64,16 @@ FormModule.controller('FormController', ['$scope', 'sharedMapService', '$http', 
     },
 
     $scope.querySearch = function (query) {
-        return $http.get(CONST.NominatimSearch + query + CONST.FormatType)
+        return $http.get(CONST.NominatimSearch + query + ",Warszawa" + CONST.FormatType + '&addressdetails=1')
                     .then(function (response) {
-                        return response.data;
+                        var result = new Array();
+                        for(object in response.data)
+                        {
+                            var toTrim = response.data[object].display_name.indexOf(",województwo");
+                            response.data[object].display_name = response.data[object].display_name.substring(0, toTrim);
+                            result.push();
+                        }
+                        return result;
                     }, function (response) { });
     },
 
