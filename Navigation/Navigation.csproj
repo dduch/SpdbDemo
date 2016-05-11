@@ -57,6 +57,7 @@
   <ItemGroup>
     <Compile Include="DataModels\Station.cs" />
     <Compile Include="DataProviders\IGeoDataProvider.cs" />
+    <Compile Include="DataProviders\StationsManager.cs" />
     <Compile Include="Graph\Cost.cs" />
     <Compile Include="Graph\Dijkstra.cs" />
     <Compile Include="DataModels\Route.cs" />

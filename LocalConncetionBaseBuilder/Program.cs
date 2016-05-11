@@ -92,6 +92,11 @@ namespace LocalConncetionBaseBuilder
                 {
                     Console.WriteLine("Avaliable commands:\n* start\n* stop\n* pause\n* continue\n* status\n* convert\n* abort");
                 }
+                else if (cmd == "fix")
+                {
+                    Console.WriteLine("Fixing ... ");
+                    FixData("stationsRoutesDB0", "stationsRoutesDB");
+                }
                 else
                 {
                     Console.WriteLine("Unknown command: " + cmd + " Try 'help'");
@@ -213,6 +218,45 @@ namespace LocalConncetionBaseBuilder
             wr.Close();
 
             Console.WriteLine("Conversion successful");
+        }
+
+        static void FixData(string infile, string outfile)
+        {
+            BinaryReader rd = new BinaryReader(new FileStream(infile, FileMode.Open));
+            BinaryWriter wr = new BinaryWriter(new FileStream(outfile, FileMode.Create));
+
+            int cnt = 0;
+            try
+            {
+                while(true)
+                {
+                    var id1 = rd.ReadInt32();
+                    var id2 = rd.ReadInt32();
+                    var dist = rd.ReadDouble();
+
+                    if (id1 == 64441)
+                        id1 = 6080;
+
+                    if (id2 == 64441)
+                        id2 = 6080;
+
+                    wr.Write(id1);
+                    wr.Write(id2);
+                    wr.Write(dist);
+
+                    ++cnt;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            finally
+            {
+                rd.Close();
+                wr.Close();
+                Console.WriteLine("Processed " + cnt + " records");
+            }
         }
     }
 }
