@@ -69,9 +69,9 @@ FormModule.controller('FormController', ['$scope', 'sharedMapService', '$http', 
                         var result = new Array();
                         for(object in response.data)
                         {
-                            var toTrim = response.data[object].display_name.indexOf(",województwo");
+                            var toTrim = response.data[object].display_name.indexOf(", województwo");
                             response.data[object].display_name = response.data[object].display_name.substring(0, toTrim);
-                            result.push();
+                            result.push(response.data[object]);
                         }
                         return result;
                     }, function (response) { });
