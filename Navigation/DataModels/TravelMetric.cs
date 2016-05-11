@@ -53,6 +53,11 @@ namespace Navigation.DataModels
 
         public TravelMetric(double velocity, double changeTime = 2 * 60)
         {
+            if (velocity <= 0)
+                throw new ArgumentException("Speed must be > 0");
+            if (changeTime < 0)
+                throw new ArgumentException("Change time must not be negative");
+
             Speed = velocity;
             ChangeTime = changeTime;
             ChangeDistanceEquivalent = ChangeTime * Speed;

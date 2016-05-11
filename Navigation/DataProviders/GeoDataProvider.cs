@@ -13,7 +13,6 @@ using System.Xml.Serialization;
 using System.Web.Script.Serialization;
 using INavigation;
 using Navigation.DataModels;
-using NavigationResolver.Properties;
 
 namespace Navigation.DataProviders
 {
@@ -25,7 +24,7 @@ namespace Navigation.DataProviders
             ["flon"] = "",
             ["tlat"] = "",
             ["tlon"] = "pl",
-            ["v"] = "",
+            ["v"] = "bicycle",
             ["fast"] = "0",
             ["format"] = "geojson",
             ["geometry"] = "1",
@@ -35,63 +34,40 @@ namespace Navigation.DataProviders
         };
 
         private static Dictionary<KeyValuePair<int, int>, double> StationsRoutes = new Dictionary<KeyValuePair<int, int>, double>();
-        //private VeturiloStations veturiloStations;
-        private List<Station> stationsList; 
-
-        // TODO: This must be used, because for the moment we do not handle all stations.
-        // When all stations are handled remove this dictionary
-        private static Dictionary<int, bool> handledStations = new Dictionary<int, bool>();
 
         static GeoDataProvider()
         {
             BinaryReader reader = new BinaryReader(new MemoryStream(Resources.stationsRoutesDB));
+            Dictionary<int, bool> handledStations = StationsManager.Get().ToDictionary(
+                station => station.Id,
+                station => false
+            );
 
             int count = Resources.stationsRoutesDB.Length;
+            int n = 0;
             while(count > 0)
             {
                 int id1 = reader.ReadInt32();
                 int id2 = reader.ReadInt32();
                 double dist = reader.ReadDouble();
                 count -= 16;
-                StationsRoutes.Add(new KeyValuePair<int, int>(id1, id2), dist);
 
-                if (!handledStations.ContainsKey(id1))
-                    handledStations.Add(id1, true);
+                if (handledStations.ContainsKey(id1) && handledStations.ContainsKey(id2))
+                {
+                    StationsRoutes.Add(new KeyValuePair<int, int>(id1, id2), dist);
+                    handledStations[id1] = true;
+                    handledStations[id2] = true;
+                }
             }
+
+            if (handledStations.ContainsValue(false))
+                throw new Exception("Critical error: connection base does not contain all existing stations!");
+
         }
 
-        public GeoDataProvider()
+        public static void PrefetchStations()
         {
-            JavaScriptSerializer js = new JavaScriptSerializer();
-            string text = Encoding.UTF8.GetString(Resources.stations);
-            //veturiloStations = (VeturiloStations)js.Deserialize(text, typeof(VeturiloStations));
-
-            XElement xdoc = XElement.Load(Settings.Default.MapOfStationsUrl);
-            IEnumerable<XElement> stationsXml = (from e in xdoc.Elements("country")
-                                                 where (string)e.Attribute("country") == "PL"
-                                                 from c in e.Elements("city")
-                                                 where (int)c.Attribute("uid") == Settings.Default.WarsawId ||
-                                                    (int)c.Attribute("uid") == Settings.Default.BemowoId
-                                                 from p in c.Elements("place")
-                                                 select p).ToList();
-
-            stationsList = new List<Station>(stationsXml.Count());
-
-            foreach (XElement node in stationsXml)
-            {
-                var stationId = Convert.ToInt32(node.Attribute("number").Value, CultureInfo.InvariantCulture);
-                if (!handledStations.ContainsKey(stationId))
-                    continue;
-
-                stationsList.Add(new Station(
-                    node.Attribute("name").Value,
-                    stationId,
-                    Convert.ToDouble(node.Attribute("lat").Value, CultureInfo.InvariantCulture),
-                    Convert.ToDouble(node.Attribute("lng").Value, CultureInfo.InvariantCulture),
-                    node.Attribute("bikes").Value != "0" // TODO: I am not sure this handles all cases, if only someone can confirm this
-                ));
-            }
-
+            StationsManager.Prefetch();
         }
 
         public IRoute GetRoute(Point source, Point destination)
@@ -131,7 +107,7 @@ namespace Navigation.DataProviders
             double bestDistance = Double.PositiveInfinity;
             int nearestStation = -1;
 
-            foreach (var station in stationsList)
+            foreach (var station in StationsManager.Get())
             {
                 if (nonempty && !station.Bikes)
                     continue;
@@ -144,26 +120,12 @@ namespace Navigation.DataProviders
                 }
             }
 
-            //foreach(StationInfo station in veturiloStations.Stations)
-            //{
-            //    if (!handledStations.ContainsKey(station.Stationnumber ?? -1))
-            //        continue;
-
-            //    Point dest = new Point(station.Latitude.Value, station.Longitude.Value);
-            //    double tempDist = p.GetDistanceTo(dest);
-            //    if (tempDist < bestDistance && station.Stationnumber != null)
-            //    {
-            //        bestDistance = tempDist;
-            //        nearestStation = (int)station.Stationnumber;
-            //    } 
-            //}
-
             return nearestStation;   
         }
 
         public IEnumerable<Station> GetStations()
         { 
-            return stationsList;
+            return StationsManager.Get();
         }
 
         public double GetPathLength(int startStation, int endStation)

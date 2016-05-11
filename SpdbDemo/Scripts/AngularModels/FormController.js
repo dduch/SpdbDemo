@@ -96,7 +96,7 @@ FormModule.controller('FormController', ['$scope', 'sharedMapService', '$http', 
                 latitude: $scope.navigation.selectedDestinationItem.lat,
                 longitude: $scope.navigation.selectedDestinationItem.lon,
             },
-            Speed: $scope.navigation.speed,
+            Speed: $scope.navigation.speed / 3.6, // Convert km/h to m/s
         }
 
      $http({
