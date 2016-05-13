@@ -9,5 +9,8 @@ namespace INavigation
         double GetLength();
 
         IRoute Append(IRoute toAppend);
+
+        float[] Serialize();
+
     }
 }
