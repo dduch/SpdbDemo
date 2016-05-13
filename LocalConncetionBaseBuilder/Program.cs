@@ -22,7 +22,7 @@ namespace LocalConncetionBaseBuilder
         static void Main(string[] args)
         {
             GeoDataProvider geoProvider = new GeoDataProvider();
-            Station[] stations = geoProvider.GetStations().Take(20).ToArray();
+            Station[] stations = geoProvider.GetStations().ToArray();
             BaseBuilder builder = new BaseBuilder(stations, "dbfile");
 
             Console.WriteLine("Connection builder started");

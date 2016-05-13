@@ -63,7 +63,7 @@ namespace Navigation
             // Create the middle part of the route
             for (int i = 1; i < stations.Count; ++i)
             {
-                route.Append(geoData.GetRoute(stations[i - 1].Position, stations[i].Position));
+                route.Append(geoData.GetRoute(stations[i - 1].Id, stations[i].Id));
                 changes[i] = new ChangeStation()
                 {
                     WaypointIndex = route.GetPoints().Count() - 1,

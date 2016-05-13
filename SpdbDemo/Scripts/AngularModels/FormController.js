@@ -25,7 +25,7 @@ FormModule.controller('FormController', ['$scope', 'sharedMapService', '$http', 
             targetEvent: ev
         })
         .then(function (answer) {
-        }, function () {});
+        }, function () { });
     };
 
     angular.element(document).ready(function () {
@@ -67,8 +67,7 @@ FormModule.controller('FormController', ['$scope', 'sharedMapService', '$http', 
         return $http.get(CONST.NominatimSearch + query + ",Warszawa" + CONST.FormatType + '&addressdetails=1')
                     .then(function (response) {
                         var result = new Array();
-                        for(object in response.data)
-                        {
+                        for (object in response.data) {
                             var toTrim = response.data[object].display_name.indexOf(", województwo");
                             response.data[object].display_name = response.data[object].display_name.substring(0, toTrim);
                             result.push(response.data[object]);
@@ -99,7 +98,7 @@ FormModule.controller('FormController', ['$scope', 'sharedMapService', '$http', 
             Speed: $scope.navigation.speed / 3.6, // Convert km/h to m/s
         }
 
-     $http({
+        $http({
             method: 'POST',
             url: window.location.origin + '/api/Route/FindRoute',
             data: JSON.stringify(requestDTO),
@@ -116,7 +115,7 @@ FormModule.controller('FormController', ['$scope', 'sharedMapService', '$http', 
             alert(response);
         });
 
-     $scope.showAdvanced();
+        $scope.showAdvanced();
     },
 
     $scope.drawRoute = function (data) {
@@ -125,11 +124,11 @@ FormModule.controller('FormController', ['$scope', 'sharedMapService', '$http', 
         sharedMapService.map.addControl(new OpenLayers.Control.DrawFeature(lineLayer, OpenLayers.Handler.Path));
 
         var points = new Array();
-        var fromProjection = new OpenLayers.Projection("EPSG:4326"); 
-        var toProjection = new OpenLayers.Projection("EPSG:900913"); 
+        var fromProjection = new OpenLayers.Projection("EPSG:4326");
+        var toProjection = new OpenLayers.Projection("EPSG:900913");
 
         for (coordinate in data.Waypoints) {
-            points.push(new OpenLayers.Geometry.Point(data.Waypoints[coordinate].Latitude, data.Waypoints[coordinate].Longitude)
+            points.push(new OpenLayers.Geometry.Point(data.Waypoints[coordinate].Longitude, data.Waypoints[coordinate].Latitude)
                 .transform(fromProjection, toProjection));
         }
 
@@ -156,22 +155,22 @@ FormModule.controller('FormController', ['$scope', 'sharedMapService', '$http', 
 
         if (data.Waypoints[0].Latitude != data.Waypoints[data.Stations[0].WaypointIndex].Latitude
             && data.Waypoints[0].Longitude != data.Waypoints[data.Stations[0].WaypointIndex].Longitude) {
-            addMarkerToLayer(data.Waypoints[0].Latitude, data.Waypoints[0].Longitude, '/Resources/startMarker48.png')
+            addMarkerToLayer(data.Waypoints[0].Longitude, data.Waypoints[0].Latitude, '/Resources/startMarker48.png')
         }
 
         if (data.Waypoints[data.Waypoints.length - 1].Latitude != data.Waypoints[data.Stations[data.Stations.length - 1].WaypointIndex].Latitude
             && data.Waypoints[data.Waypoints.length - 1].Longitude != data.Waypoints[data.Stations[data.Stations.length - 1].WaypointIndex].Longitude) {
-            addMarkerToLayer(data.Waypoints[data.Waypoints.length - 1].Latitude, data.Waypoints[data.Waypoints.length - 1].Longitude, '/Resources/stopMarker48.png')
+            addMarkerToLayer(data.Waypoints[data.Waypoints.length - 1].Longitude, data.Waypoints[data.Waypoints.length - 1].Latitude, '/Resources/stopMarker48.png')
         }
 
-        for(station in data.Stations){
+        for (station in data.Stations) {
             var lat = data.Waypoints[data.Stations[station].WaypointIndex].Latitude;
             var lon = data.Waypoints[data.Stations[station].WaypointIndex].Longitude;
-            addMarkerToLayer(lat, lon, '/Resources/stationMarker48.png')
+            addMarkerToLayer(lon, lat, '/Resources/stationMarker48.png')
         }
     },
 
-    addMarkerToLayer = function(lat, lon, iconPath){
+    addMarkerToLayer = function (lat, lon, iconPath) {
         var fromProjection = new OpenLayers.Projection("EPSG:4326");   // Transform from WGS 1984
         var toProjection = new OpenLayers.Projection("EPSG:900913"); // to Spherical Mercator Proj
         var position = new OpenLayers.LonLat(lat, lon).transform(fromProjection, toProjection);

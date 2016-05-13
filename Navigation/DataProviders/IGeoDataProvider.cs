@@ -15,9 +15,14 @@ namespace Navigation.DataProviders
         /// </summary>
         /// <param name="source"> start place coordinates</param>
         /// <param name="destination"> destination place coordinates</param>
-        /// <param name="prefferedType"> preffered type of transport bike/car</param>
-        /// <param name="lengthRestriction">restricion of length</param>
         IRoute GetRoute(Point source, Point destination);
+
+        /// <summary>
+        /// Returns object representing route between two stations
+        /// </summary>
+        /// <param name="source"> id of source station</param>
+        /// <param name="destination"> id of destination station</param>
+        IRoute GetRoute(int source, int destination);
 
 
         /// <summary>
