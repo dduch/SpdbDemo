@@ -65,8 +65,8 @@ namespace Navigation.DataProviders
                 }
             }
 
-            if (handledStations.ContainsValue(false))
-                throw new Exception("Critical error: connection base does not contain all existing stations!");
+            //if (handledStations.ContainsValue(false))
+            //    throw new Exception("Critical error: connection base does not contain all existing stations!");
 
         }
 

@@ -2,8 +2,8 @@
 <script src="http://www.openstreetmap.org/openlayers/OpenStreetMap.js"></script>
 
 <div ng-app="FormApp">
-    <div ng-controller="FormController" layout="row">
-        <md-card flex="25" layout="column">
+    <div ng-controller="FormController" layout="row" layout-xs="column">
+        <md-card flex="25" layout="column" flex-xs="100">
             <md-content class="md-no-momentum" flex layout="column" layout-margin>
                 <div class="FlexItem layout-column" layout="column" layout-align="left">
                     <div>
@@ -13,8 +13,7 @@
                                     <td>
                                         <md-icon la md-svg-src="~/Resources/location48.svg"></md-icon>
                                     </td>
-                                    <td width="3px">
-                                    </td>
+                                    <td width="3px"></td>
                                     <td>
                                         <span> Use my location</span>
                                     </td>
@@ -41,45 +40,42 @@
                     <md-slider flex="" min="1" max="50" ng-model="navigation.speed" aria-label="speed" id="speed-slider" class="md-primary">
                     </md-slider>
                     <div flex="20" layout="" layout-align="center center">
-                        <input flex="" min="1" max="50" style="margin-left: 20px" ng-model="navigation.speed" aria-label="speed" aria-controls="speed-slider" type="number">
-                    </div>
-                </div>
-                <div class="FlexItem" layout="row" layout-align="center" ng-click="onSearchClickAction()">
-                    <div>
-                        <md-button class="md-raised md-primary">Search</md-button>
+                        <input ng-disabled="true" flex="" min="1" max="50" style="margin-left: 20px" ng-model="navigation.speed" aria-label="speed" aria-controls="speed-slider" type="number">
                     </div>
                 </div>
             </md-content>
         </md-card>
-        <md-card flex="75">
+        <md-card flex="75" flex-xs="100">
             <div class="FlexItem layout-row" layout="row" style="max-height: 70px;">
-                <div>
-                    <img src="~/Resources/start.png">
+                <div flex="45" flex-xs="100" layout="row">
+                    <div flex="10">
+                        <img src="~/Resources/start.png">
+                    </div>
+                    <div flex="90">
+                        <md-autocomplete md-floating-label="Start location"
+                                         md-item-text="item.display_name"
+                                         md-items="item in navigation.autocompleteData(navigation.startSearchText)"
+                                         md-search-text="navigation.startSearchText"
+                                         md-selected-item="navigation.selectedStartItem"
+                                         md-input-name="autocompleteField"
+                                         md-no-cache="true"
+                                         required="true">
+                            <md-item-template>
+                                <span style="position: absolute" md-highlight-text="navigation.startSearchText">{{item.display_name}}</span>
+                            </md-item-template>
+                            <div ng-messages="searchForm.autocompleteField.$error" ng-if="searchForm.autocompleteField.$touched">
+                                <div ng-message="required">You <b>must</b> have a favorite movie.</div>
+                                <div ng-message="minlength">Your entry is not long enough.</div>
+                                <div ng-message="maxlength">Your entry is too long.</div>
+                            </div>
+                        </md-autocomplete>
+                    </div>
                 </div>
-                <div flex>
-                    <md-autocomplete md-floating-label="Start location"
-                                     md-item-text="item.display_name"
-                                     md-items="item in navigation.autocompleteData(navigation.startSearchText)"
-                                     md-search-text="navigation.startSearchText"
-                                     md-selected-item="navigation.selectedStartItem"
-                                     md-input-name="autocompleteField"
-                                     md-no-cache="true"
-                                     required="true">
-                        <md-item-template>
-                            <span style="position: absolute" md-highlight-text="navigation.startSearchText">{{item.display_name}}</span>
-                        </md-item-template>
-                        <div ng-messages="searchForm.autocompleteField.$error" ng-if="searchForm.autocompleteField.$touched">
-                            <div ng-message="required">You <b>must</b> have a favorite movie.</div>
-                            <div ng-message="minlength">Your entry is not long enough.</div>
-                            <div ng-message="maxlength">Your entry is too long.</div>
-                        </div>
-                    </md-autocomplete>
-                </div>
-                <div flex layout="row">
-                    <div>
+                <div flex="45" flex-xs="100" layout="row">
+                    <div flex="10">
                         <img src="~/Resources/stop.png">
                     </div>
-                    <div flex>
+                    <div flex="90">
                         <md-autocomplete md-floating-label="Destination"
                                          md-item-text="item.display_name"
                                          md-items="item in navigation.autocompleteData(navigation.destinationSearchText)"
@@ -99,9 +95,14 @@
                         </md-autocomplete>
                     </div>
                 </div>
+                <div flex="10" style="padding: 7px; margin-left: 55px;" class="FlexItem" layout="row" layout-align="center" ng-click="onSearchClickAction()">
+                    <div>
+                        <md-button class="md-raised md-primary">Search</md-button>
+                    </div>
+                </div>
             </div>
             <md-card-content>
-                <div id="map_canvas" style="height: 510px; position: relative"></div>
+                <div id="map_canvas" style="height: 495px; position: relative"></div>
             </md-card-content>
         </md-card>
         <script type="text/ng-template" id="dialog1.tmpl.html">

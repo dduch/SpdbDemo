@@ -14,7 +14,7 @@ FormModule.controller('FormController', ['$scope', 'sharedMapService', '$http', 
         selectedDestinationItem: undefined,
         startSearchText: "",
         destinationSearchText: "",
-        speed: 1,
+        speed: 15,
     };
 
     $scope.showAdvanced = function (ev) {

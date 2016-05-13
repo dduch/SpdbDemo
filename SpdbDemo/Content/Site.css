@@ -1,14 +1,14 @@
 ﻿body {
     padding-top: 60px;
     padding-bottom: 20px;
-    padding-left: 4%;
-    padding-right: 4%;
+    padding-left: 2%;
+    padding-right: 2%;
 }
 
 /* Set padding to keep content from hitting the edges */
 .body-content {
-    padding-left: 5px;
-    padding-right: 5px;
+    padding-left: 4px;
+    padding-right: 4px;
 }
 
 /* Override the default bootstrap behavior where horizontal description lists 
