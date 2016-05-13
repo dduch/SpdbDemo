@@ -72,5 +72,29 @@ namespace Navigation.DataModels
         {
             return points;
         }
+
+        public float[] Serialize()
+        {
+            float[] data = new float[points.Count*2 + 1];
+            int i;
+            for(i = 0; i < points.Count; ++i)
+            {
+                data[2 * i] = (float)points[i].Latitude;
+                data[2 * i + 1] = (float)points[i].Longitude;
+            }
+            data[2 * i] = (float)routeLength;
+            return data;
+        }
+
+        public Route(float[] data)
+        {
+            int n = (data.Length - 1) / 2;
+            points = new List<Point>(n);
+            for (int i = 0; i < n; ++i)
+            {
+                points.Add(new Point(data[2 * i], data[2 * i + 1]));
+            }
+            routeLength = data[data.Length - 1];
+        }
     }
 }

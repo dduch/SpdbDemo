@@ -33,7 +33,7 @@ namespace Navigation.DataProviders
             ["lang"] = "pl",
         };
 
-        private static Dictionary<KeyValuePair<int, int>, double> StationsRoutes = new Dictionary<KeyValuePair<int, int>, double>();
+        private static Dictionary<KeyValuePair<int, int>, Route> StationsRoutes = new Dictionary<KeyValuePair<int, int>, Route>();
 
         static GeoDataProvider()
         {
@@ -44,17 +44,22 @@ namespace Navigation.DataProviders
             );
 
             int count = Resources.stationsRoutesDB.Length;
-            int n = 0;
             while(count > 0)
             {
-                int id1 = reader.ReadInt32();
-                int id2 = reader.ReadInt32();
-                double dist = reader.ReadDouble();
-                count -= 16;
+                int idOfsett = 6000;
+                int id1 = (int)reader.ReadUInt16() + idOfsett;
+                int id2 = (int)reader.ReadUInt16() + idOfsett;
+                int n = (int)reader.ReadUInt16();
+                float[] points = new float[n];
+                for(int k = 0; k < n; ++k)
+                {
+                    points[k] = reader.ReadSingle();
+                }
+                count -= 3*2 + n*4;
 
                 if (handledStations.ContainsKey(id1) && handledStations.ContainsKey(id2))
                 {
-                    StationsRoutes.Add(new KeyValuePair<int, int>(id1, id2), dist);
+                    StationsRoutes.Add(new KeyValuePair<int, int>(id1, id2), new Route(points));
                     handledStations[id1] = true;
                     handledStations[id2] = true;
                 }
@@ -95,7 +100,7 @@ namespace Navigation.DataProviders
 
             foreach(float[] coordinate in route.coordinates)
             {
-                foundedRoute.Add(new Point(coordinate[0], coordinate[1]));
+                foundedRoute.Add(new Point(coordinate[1], coordinate[0]));
             }
 
             return new Route(foundedRoute, Convert.ToDouble(route.properties.distance, CultureInfo.InvariantCulture));
@@ -130,7 +135,12 @@ namespace Navigation.DataProviders
 
         public double GetPathLength(int startStation, int endStation)
         {
-            return StationsRoutes[new KeyValuePair<int, int>(startStation, endStation)];
+            return StationsRoutes[new KeyValuePair<int, int>(startStation, endStation)].GetLength();
+        }
+
+        public IRoute GetRoute(int source, int destination)
+        {
+            return StationsRoutes[new KeyValuePair<int, int>(source, destination)];
         }
     }
 }

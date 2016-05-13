@@ -60,5 +60,10 @@ namespace NavigationTest
             var point = new Point(pos.Latitude, pos.Longitude);
             return locations.FindIndex(loc => loc == point);
         }
+
+        public IRoute GetRoute(int source, int destination)
+        {
+            return new Route(new List<Point>() { locations[source], locations[destination] });
+        }
     }
 }
