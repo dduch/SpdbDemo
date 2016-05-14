@@ -106,3 +106,12 @@ textarea {
 table .cr {
     min-width: 30px;    
 }
+
+
+
+table.scroll tbody,
+table.scroll thead { display: block; }
+
+table.scroll tbody {
+    height: 200px !important;
+}
