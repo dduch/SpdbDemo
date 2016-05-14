@@ -113,7 +113,7 @@ namespace Navigation.DataProviders
                 case Status.OLD: Prefetch(); break;
                 case Status.EXPIRED: Fetch();  break;
             }
-            return _stations;
+            return _stations.Take(20);
         }
     }
 }
