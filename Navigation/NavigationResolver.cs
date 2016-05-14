@@ -42,48 +42,85 @@ namespace Navigation
         private NavigationResult ConstructRoute(Point source, List<Station> stations, Point destination, TravelMetric metric)
         {
             IRoute route = new Route(new List<Point>());
-            ChangeStation[] changes = new ChangeStation[stations.Count];
+            List<Keypoint> keypoints = new List<Keypoint>(stations.Count+2);
+            Keypoint k;
             double totalCost = 0.0;
+            double lastCost = 0.0;
             double lastLength = 0.0;
 
-            // Create part of route from source to first station:
-            changes[0] = new ChangeStation();
+            // 1) Create part of route from source to first station:
+            k = new Keypoint();
             if (!source.Equals(stations.First().Position))
             {
+                // Adding first point of route that is different than first station
+                keypoints.Add(new Keypoint()
+                {
+                    IsStation = false,
+                    WaypointIndex = 0,
+                    Name = "STARTPOINT",
+                    Number = -1,
+                    DistanceFromPrevious = 0.0,
+                    CostFromPrevious = 0.0
+                });
+
                 route.Append(geoData.GetRoute(source, stations.First().Position));
-                changes[0].WaypointIndex = route.GetPoints().Count() - 1;
+                k.WaypointIndex = route.GetPoints().Count() - 1;
                 lastLength = route.GetLength();
+                k.DistanceFromPrevious = lastLength;
             }
             else
-                changes[0].WaypointIndex = 0;
+            {
+                k.WaypointIndex = 0;
+                k.DistanceFromPrevious = 0.0;
+            }
 
-            changes[0].Name = stations[0].Name;
-            changes[0].Number = stations[0].Id;
+            k.IsStation = true;
+            k.Name = stations[0].Name;
+            k.Number = stations[0].Id;
+            k.CostFromPrevious = 0.0;
+            keypoints.Add(k);
 
             // Create the middle part of the route
             for (int i = 1; i < stations.Count; ++i)
             {
                 route.Append(geoData.GetRoute(stations[i - 1].Id, stations[i].Id));
-                changes[i] = new ChangeStation()
+                totalCost += metric.PathCost(route.GetLength() - lastLength);
+                k = new Keypoint()
                 {
+                    IsStation = true,
                     WaypointIndex = route.GetPoints().Count() - 1,
                     Name = stations[i].Name,
-                    Number = stations[i].Id
+                    Number = stations[i].Id,
+                    DistanceFromPrevious = route.GetLength() - lastLength,
+                    CostFromPrevious = totalCost - lastCost
                 };
-                totalCost += metric.PathCost(route.GetLength() - lastLength);
                 lastLength = route.GetLength();
+                lastCost = totalCost;
+                keypoints.Add(k);
             }
 
             // Create part of route from last station to destination:
             if (!destination.Equals(stations.Last().Position))
+            {
                 route.Append(geoData.GetRoute(stations.Last().Position, destination));
+                // Adding last point of route that is different than last station
+                keypoints.Add(new Keypoint()
+                {
+                    IsStation = false,
+                    WaypointIndex = route.GetPoints().Count() - 1,
+                    Name = "ENDPOINT",
+                    Number = -1,
+                    DistanceFromPrevious = route.GetLength() - lastLength,
+                    CostFromPrevious = 0.0
+                });
+            }
 
             var waypoints = route.GetPoints().Select(p => new Waypoint() { Latitude = p.Latitude, Longitude = p.Longitude }).ToArray();
 
             return new NavigationResult()
             {
                 Waypoints = waypoints,
-                Stations = changes,
+                Keypoints = keypoints.ToArray(),
                 EstimatedCost = totalCost,
                 RouteLength = route.GetLength()
             };
