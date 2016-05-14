@@ -182,49 +182,90 @@ FormModule.controller('FormController', ['$scope', 'sharedMapService', '$http', 
     drawMarkers = function (data) {
         $scope.navigation.pathDetails = new Array();
 
-        for (var i = 0; i < sharedMapService.map.layers.length; ++i) {
-            if (sharedMapService.map.layers[i].name == "Markers") {
-                sharedMapService.map.layers[i].clearMarkers();
-                break;
+
+        for (keypoint in data.Keypoints) {
+            if (data.Keypoints[keypoint].DistanceFromPrevious > 0) {
+                data.Keypoints[keypoint].DistanceFromPrevious = (data.Keypoints[keypoint].DistanceFromPrevious / 1000).toFixed(2);
+            }
+            else {
+                data.Keypoints[keypoint].DistanceFromPrevious = data.Keypoints[keypoint].DistanceFromPrevious.toFixed(2);
+            }
+            if (keypoint == 0) {
+                addMarkerToLayer(data.Waypoints[0].Longitude, data.Waypoints[0].Latitude, '/Resources/startMarker48.png')
+                var info = {
+                    From: data.Keypoints[keypoint].Name,
+                    Type: "On foot",
+                    Distance: data.Keypoints[keypoint].DistanceFromPrevious,
+                }
+                $scope.navigation.pathDetails.push(info);
+            }
+            else if(keypoint == data.Keypoints.length - 1){
+                var lat = data.Waypoints[data.Keypoints[keypoint].WaypointIndex].Latitude;
+                var lon = data.Waypoints[data.Keypoints[keypoint].WaypointIndex].Longitude;
+                addMarkerToLayer(lon, lat, '/Resources/stationMarker48.png')
+                var info = {
+                    From: data.Keypoints[keypoint].Name,
+                    Type: "On foot",
+                    Distance: data.Keypoints[keypoint].DistanceFromPrevious,
+                }
+                $scope.navigation.pathDetails.push(info);
+            }
+            else {
+                var lat = data.Waypoints[data.Keypoints[keypoint].WaypointIndex].Latitude;
+                var lon = data.Waypoints[data.Keypoints[keypoint].WaypointIndex].Longitude;
+                addMarkerToLayer(lon, lat, '/Resources/stationMarker48.png')
+                var info = {
+                    From: data.Keypoints[keypoint].Name,
+                    Type: "Cycling",
+                    Distance: data.Keypoints[keypoint].DistanceFromPrevious,
+                }
+                $scope.navigation.pathDetails.push(info);
             }
         }
 
-        if (data.Waypoints[0].Latitude != data.Waypoints[data.Stations[0].WaypointIndex].Latitude
-            && data.Waypoints[0].Longitude != data.Waypoints[data.Stations[0].WaypointIndex].Longitude) {
-            addMarkerToLayer(data.Waypoints[0].Longitude, data.Waypoints[0].Latitude, '/Resources/startMarker48.png')
-            var parts = $scope.navigation.selectedStartItem.display_name.split(",");
+        //for (var i = 0; i < sharedMapService.map.layers.length; ++i) {
+        //    if (sharedMapService.map.layers[i].name == "Markers") {
+        //        sharedMapService.map.layers[i].clearMarkers();
+        //        break;
+        //    }
+        //}
+
+        //if (data.Waypoints[0].Latitude != data.Waypoints[data.Stations[0].WaypointIndex].Latitude
+        //    && data.Waypoints[0].Longitude != data.Waypoints[data.Stations[0].WaypointIndex].Longitude) {
+        //    addMarkerToLayer(data.Waypoints[0].Longitude, data.Waypoints[0].Latitude, '/Resources/startMarker48.png')
+        //    var parts = $scope.navigation.selectedStartItem.display_name.split(",");
             
-            var info = {
-                From: parts[0] + " " + parts[1],
-                Type: "On foot",
-                Distance: "10 km",
-            }
-            $scope.navigation.pathDetails.push(info);
-        }
+        //    var info = {
+        //        From: parts[0] + " " + parts[1],
+        //        Type: "On foot",
+        //        Distance: "10 km",
+        //    }
+        //    $scope.navigation.pathDetails.push(info);
+        //}
 
-        for (station in data.Stations) {
-            var lat = data.Waypoints[data.Stations[station].WaypointIndex].Latitude;
-            var lon = data.Waypoints[data.Stations[station].WaypointIndex].Longitude;
-            addMarkerToLayer(lon, lat, '/Resources/stationMarker48.png')
-            var info = {
-                From: data.Stations[station].Name,
-                Type: "Cycling",
-                Distance: "10 km"
-            }
-            $scope.navigation.pathDetails.push(info);
-        }
+        //for (station in data.Stations) {
+        //    var lat = data.Waypoints[data.Stations[station].WaypointIndex].Latitude;
+        //    var lon = data.Waypoints[data.Stations[station].WaypointIndex].Longitude;
+        //    addMarkerToLayer(lon, lat, '/Resources/stationMarker48.png')
+        //    var info = {
+        //        From: data.Stations[station].Name,
+        //        Type: "Cycling",
+        //        Distance: "10 km"
+        //    }
+        //    $scope.navigation.pathDetails.push(info);
+        //}
 
-        if (data.Waypoints[data.Waypoints.length - 1].Latitude != data.Waypoints[data.Stations[data.Stations.length - 1].WaypointIndex].Latitude
-            && data.Waypoints[data.Waypoints.length - 1].Longitude != data.Waypoints[data.Stations[data.Stations.length - 1].WaypointIndex].Longitude) {
-            addMarkerToLayer(data.Waypoints[data.Waypoints.length - 1].Longitude, data.Waypoints[data.Waypoints.length - 1].Latitude, '/Resources/stopMarker48.png')
-            var parts = $scope.navigation.selectedDestinationItem.display_name.split(",");
-            var info = {
-                From: parts[0] + " " + parts[1],
-                Type: "On foot",
-                Distance: "10 km",
-            }
-            $scope.navigation.pathDetails.push(info);
-        }
+        //if (data.Waypoints[data.Waypoints.length - 1].Latitude != data.Waypoints[data.Stations[data.Stations.length - 1].WaypointIndex].Latitude
+        //    && data.Waypoints[data.Waypoints.length - 1].Longitude != data.Waypoints[data.Stations[data.Stations.length - 1].WaypointIndex].Longitude) {
+        //    addMarkerToLayer(data.Waypoints[data.Waypoints.length - 1].Longitude, data.Waypoints[data.Waypoints.length - 1].Latitude, '/Resources/stopMarker48.png')
+        //    var parts = $scope.navigation.selectedDestinationItem.display_name.split(",");
+        //    var info = {
+        //        From: parts[0] + " " + parts[1],
+        //        Type: "On foot",
+        //        Distance: "10 km",
+        //    }
+        //    $scope.navigation.pathDetails.push(info);
+        //}
 
         $scope.isResult = true;
     },
