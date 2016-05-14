@@ -80,7 +80,8 @@ namespace LocalConncetionBaseBuilder
 
             Console.WriteLine("Started downloading from: " + i + " " + j);
 
-            while (process)
+            bool completed = false;
+            while (process || !completed)
             {
                 try
                 {
@@ -94,6 +95,7 @@ namespace LocalConncetionBaseBuilder
                                 {
                                     i = (j - 1) >= 0 ? i : i - 1;
                                     j = (j - 1) >= 0 ? j : n - 1;
+                                    completed = true;
                                     throw new ThreadInterruptedException();
                                 }
 
@@ -121,6 +123,7 @@ namespace LocalConncetionBaseBuilder
                         ++i;
                     }
                     process = false;
+                    completed = true;
                     progress = 100.0;
                     Console.WriteLine("Download completed");
                 }
