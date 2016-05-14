@@ -15,7 +15,10 @@ FormModule.controller('FormController', ['$scope', 'sharedMapService', '$http', 
         startSearchText: "",
         destinationSearchText: "",
         speed: 15,
+        pathDetails: new Array()
     };
+
+    $scope.isResult = false;
 
     $scope.showAdvanced = function (ev) {
         $mdDialog.show({
@@ -26,6 +29,19 @@ FormModule.controller('FormController', ['$scope', 'sharedMapService', '$http', 
         })
         .then(function (answer) {
         }, function () { });
+    };
+
+    $scope.showRouteAlert = function (ev) {
+        $mdDialog.show(
+          $mdDialog.alert()
+            .parent(angular.element(document.body))
+            .clickOutsideToClose(true)
+            .title('Finding route alert')
+            .textContent("I'm sorry I can not find any route, change your request or try again.")
+            .ariaLabel('Finding route alert')
+            .ok('Got it!')
+            .targetEvent(ev)
+        );
     };
 
     angular.element(document).ready(function () {
@@ -80,8 +96,25 @@ FormModule.controller('FormController', ['$scope', 'sharedMapService', '$http', 
         $http.get(CONST.NominatimReverse + 'lat=' + $scope.navigation.latitude + '&lon=' + $scope.navigation.longitude + '&addressdetails=1')
                    .then(function (response) {
                        $scope.navigation.selectedStartItem = response.data;
-                       $scope.navigation.selectedStartItem.display_name = response.data.address.road + ', ' +
-                           response.data.address.house_number + ', ' + response.data.address.suburb + ', ' + response.data.address.city;
+                       var road = response.data.address.road;
+                       var houseNumber = response.data.address.house_number;
+                       var suburb = response.data.address.suburb;
+                       var city = response.data.address.city;
+                       $scope.navigation.selectedStartItem.display_name = "";
+
+                       if (road != undefined){
+                           $scope.navigation.selectedStartItem.display_name += road;
+                       }
+                       if(houseNumber != undefined){
+                           $scope.navigation.selectedStartItem.display_name += ", " + houseNumber;
+                       }
+                       if (suburb != undefined) {
+                           $scope.navigation.selectedStartItem.display_name += ", " + suburb;
+                       }
+                       if (city != undefined) {
+                           $scope.navigation.selectedStartItem.display_name += ", " + city;
+                       }
+
                    }, function (response) { });
     }
 
@@ -112,7 +145,8 @@ FormModule.controller('FormController', ['$scope', 'sharedMapService', '$http', 
             $scope.drawRoute(response.data);
             $mdDialog.hide();
         }, function errorCallback(response) {
-            alert(response);
+            $mdDialog.hide();
+            $scope.showRouteAlert();
         });
 
         $scope.showAdvanced();
@@ -146,6 +180,8 @@ FormModule.controller('FormController', ['$scope', 'sharedMapService', '$http', 
     },
 
     drawMarkers = function (data) {
+        $scope.navigation.pathDetails = new Array();
+
         for (var i = 0; i < sharedMapService.map.layers.length; ++i) {
             if (sharedMapService.map.layers[i].name == "Markers") {
                 sharedMapService.map.layers[i].clearMarkers();
@@ -156,18 +192,41 @@ FormModule.controller('FormController', ['$scope', 'sharedMapService', '$http', 
         if (data.Waypoints[0].Latitude != data.Waypoints[data.Stations[0].WaypointIndex].Latitude
             && data.Waypoints[0].Longitude != data.Waypoints[data.Stations[0].WaypointIndex].Longitude) {
             addMarkerToLayer(data.Waypoints[0].Longitude, data.Waypoints[0].Latitude, '/Resources/startMarker48.png')
-        }
-
-        if (data.Waypoints[data.Waypoints.length - 1].Latitude != data.Waypoints[data.Stations[data.Stations.length - 1].WaypointIndex].Latitude
-            && data.Waypoints[data.Waypoints.length - 1].Longitude != data.Waypoints[data.Stations[data.Stations.length - 1].WaypointIndex].Longitude) {
-            addMarkerToLayer(data.Waypoints[data.Waypoints.length - 1].Longitude, data.Waypoints[data.Waypoints.length - 1].Latitude, '/Resources/stopMarker48.png')
+            var parts = $scope.navigation.selectedStartItem.display_name.split(",");
+            
+            var info = {
+                From: parts[0] + " " + parts[1],
+                Type: "On foot",
+                Distance: "10 km",
+            }
+            $scope.navigation.pathDetails.push(info);
         }
 
         for (station in data.Stations) {
             var lat = data.Waypoints[data.Stations[station].WaypointIndex].Latitude;
             var lon = data.Waypoints[data.Stations[station].WaypointIndex].Longitude;
             addMarkerToLayer(lon, lat, '/Resources/stationMarker48.png')
+            var info = {
+                From: data.Stations[station].Name,
+                Type: "Cycling",
+                Distance: "10 km"
+            }
+            $scope.navigation.pathDetails.push(info);
         }
+
+        if (data.Waypoints[data.Waypoints.length - 1].Latitude != data.Waypoints[data.Stations[data.Stations.length - 1].WaypointIndex].Latitude
+            && data.Waypoints[data.Waypoints.length - 1].Longitude != data.Waypoints[data.Stations[data.Stations.length - 1].WaypointIndex].Longitude) {
+            addMarkerToLayer(data.Waypoints[data.Waypoints.length - 1].Longitude, data.Waypoints[data.Waypoints.length - 1].Latitude, '/Resources/stopMarker48.png')
+            var parts = $scope.navigation.selectedDestinationItem.display_name.split(",");
+            var info = {
+                From: parts[0] + " " + parts[1],
+                Type: "On foot",
+                Distance: "10 km",
+            }
+            $scope.navigation.pathDetails.push(info);
+        }
+
+        $scope.isResult = true;
     },
 
     addMarkerToLayer = function (lat, lon, iconPath) {
