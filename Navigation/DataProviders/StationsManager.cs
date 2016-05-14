@@ -10,7 +10,7 @@ using System.Globalization;
 
 namespace Navigation.DataProviders
 {
-    class StationsManager
+    public class StationsManager
     {
         private static List<Station> _stations;
         private static object _fetchLock = new object();

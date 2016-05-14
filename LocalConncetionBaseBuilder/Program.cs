@@ -21,8 +21,7 @@ namespace LocalConncetionBaseBuilder
 
         static void Main(string[] args)
         {
-            GeoDataProvider geoProvider = new GeoDataProvider();
-            Station[] stations = geoProvider.GetStations().ToArray();
+            Station[] stations = StationsManager.Get().ToArray();
             BaseBuilder builder = new BaseBuilder(stations, "dbfile");
 
             Console.WriteLine("Connection builder started");
@@ -31,58 +30,71 @@ namespace LocalConncetionBaseBuilder
 
             while (true)
             {
-                var cmd = Console.ReadLine();
+                try
+                {
 
-                if(cmd == "start")
-                {
-                    builder.StartDownload();
-                }
-                else if (cmd == "continue")
-                {
-                    builder.ContinueDownload();
-                }
-                else if (cmd == "pause")
-                {
-                    builder.StopDownload();
-                }
-                else if (cmd == "status")
-                {
-                    var status = builder.Status();
-                    Console.WriteLine((status.Item1 ? "Running" : "Stopped") + ". Progress: " + status.Item2 + "%");
-                }
-                else if (cmd == "exit")
-                {
-                    var status = builder.Status();
-                    if (status.Item1 == true) // download is running
+                    var cmd = Console.ReadLine();
+
+                    if (cmd == "start")
                     {
-                        Console.WriteLine("Download is running. Are you sure (Y/N)?");
-                        var response = Console.ReadLine();
-                        if (response == "Y")
+                        builder.StartDownload();
+                    }
+                    else if (cmd == "continue")
+                    {
+                        builder.ContinueDownload();
+                    }
+                    else if (cmd == "pause")
+                    {
+                        builder.StopDownload();
+                    }
+                    else if (cmd == "update")
+                    {
+                        builder.Update();
+                    }
+                    else if (cmd == "status")
+                    {
+                        var status = builder.Status();
+                        Console.WriteLine((status.Item1 ? "Running" : "Stopped") + ". Progress: " + status.Item2 + "%");
+                    }
+                    else if (cmd == "exit")
+                    {
+                        var status = builder.Status();
+                        if (status.Item1 == true) // download is running
                         {
-                            builder.StopDownload();
-                            break;
+                            Console.WriteLine("Download is running. Are you sure (Y/N)?");
+                            var response = Console.ReadLine();
+                            if (response == "Y")
+                            {
+                                builder.StopDownload();
+                                break;
+                            }
                         }
+                        else
+                            break;
+                    }
+                    else if (cmd == "help")
+                    {
+                        Console.WriteLine("Avaliable commands:");
+                        Console.WriteLine("* start - starts new download");
+                        Console.WriteLine("* continue - continues paused download");
+                        Console.WriteLine("* pause - stops download");
+                        Console.WriteLine("* update - updates and cleans existing database");
+                        Console.WriteLine("* status - shows current download progress");
+                        Console.WriteLine("* exit - exists programm, stops download if running");
+                        Console.WriteLine("* help - displays this help");
+                    }
+                    else if (cmd == "special")
+                    {
+                        Special(stations);
                     }
                     else
-                        break;
+                    {
+                        Console.WriteLine("Unknown command: " + cmd + " Try 'help'");
+                    }
                 }
-                else if (cmd == "help")
+                catch (Exception ex)
                 {
-                    Console.WriteLine("Avaliable commands:");
-                    Console.WriteLine("* start - starts new download");
-                    Console.WriteLine("* continue - continues paused download");
-                    Console.WriteLine("* pause - stops download");
-                    Console.WriteLine("* status - shows current download progress");
-                    Console.WriteLine("* exit - exists programm, stops download if running");
-                    Console.WriteLine("* help - displays this help");
-                }
-                else if (cmd == "special")
-                {
-                    Special(stations);
-                }
-                else
-                {
-                    Console.WriteLine("Unknown command: " + cmd + " Try 'help'");
+                    Console.WriteLine("Exception was caught: " + ex.Message);
                 }
             }
         }

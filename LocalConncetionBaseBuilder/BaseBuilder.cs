@@ -38,7 +38,7 @@ namespace LocalConncetionBaseBuilder
             progress = 0.0;
 
             process = true;
-            downloader = new Thread(DownloadData);
+            downloader = new Thread(() => DownloadData());
             downloader.Start();
         }
 
@@ -55,9 +55,60 @@ namespace LocalConncetionBaseBuilder
             if (downloader == null)
             {
                 process = true;
-                downloader = new Thread(DownloadData);
+                downloader = new Thread(() => DownloadData());
                 downloader.Start();
             }
+        }
+
+        public void Update()
+        {
+            string tmpfile = dbfile + ".old";
+            HashSet<KeyValuePair<int, int>> downloadedConnections = new HashSet<KeyValuePair<int, int>>();
+            File.Copy(dbfile, tmpfile, true);
+            File.Delete(dbfile);
+            BinaryReader reader = new BinaryReader(new FileStream(tmpfile, FileMode.Open, FileAccess.Read));
+            BinaryWriter writer = new BinaryWriter(new FileStream(dbfile, FileMode.Create, FileAccess.Write));
+            int redundantConnectionsCnt = 0;
+
+            while (reader.BaseStream.Position != reader.BaseStream.Length)
+            {
+                int idOfsett = 6000;
+                int id1 = (int)reader.ReadUInt16() + idOfsett;
+                int id2 = (int)reader.ReadUInt16() + idOfsett;
+                int n = (int)reader.ReadUInt16();
+                float[] points = new float[n];
+                for (int k = 0; k < n; ++k)
+                {
+                    points[k] = reader.ReadSingle();
+                }
+
+                var con = new KeyValuePair<int, int>(id1, id2);
+                if (!downloadedConnections.Contains(con))
+                {
+                    writer.Write(Convert.ToUInt16(id1 - idOfsett));
+                    writer.Write(Convert.ToUInt16(id2 - idOfsett));
+                    writer.Write(Convert.ToUInt16(n));
+                    for (int k = 0; k < n; ++k)
+                        writer.Write(points[k]);
+
+                    downloadedConnections.Add(new KeyValuePair<int, int>(id1, id2));
+                }
+                else
+                    ++redundantConnectionsCnt;           
+            }
+            reader.Close();
+            writer.Close();
+
+            Console.WriteLine("Cleanup completed. Found " + redundantConnectionsCnt + " redundant connections");
+
+            int allConnections = stations.Length * stations.Length - stations.Length;
+            Console.WriteLine("Downloading " + (allConnections - downloadedConnections.Count) + " missing connections");
+
+            File.WriteAllText(statusfile, "0 0");
+            progress = 0.0;
+            process = true;
+            downloader = new Thread(() => DownloadData(downloadedConnections));
+            downloader.Start();
         }
 
         public Tuple<bool,double> Status()
@@ -66,7 +117,7 @@ namespace LocalConncetionBaseBuilder
         }
 
 
-        private void DownloadData()
+        private void DownloadData(HashSet<KeyValuePair<int, int>> downloadedConnections = null)
         {
             string line = string.Empty;
             int n = stations.Length;
@@ -101,6 +152,12 @@ namespace LocalConncetionBaseBuilder
 
                                 var src = stations[i];
                                 var dst = stations[j];
+
+                                if (downloadedConnections != null && downloadedConnections.Contains(new KeyValuePair<int, int>(src.Id, dst.Id)))
+                                {
+                                    ++j;
+                                    continue; // We already have this connection db and can skip it
+                                }
 
                                 var route = routeBuilder.BuildRoute(src.Position, dst.Position);
 
