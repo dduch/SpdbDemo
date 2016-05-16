@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Navigation.DataModels;
 
 namespace LocalConncetionBaseBuilder.Net
 {
@@ -18,10 +19,12 @@ namespace LocalConncetionBaseBuilder.Net
     {
         public int To { get; }
         public ArchType Type { get; set; }
-        public Arch(int to, ArchType type)
+        public Route Content { get; set; }
+        public Arch(int to, ArchType type, Route content)
         {
             To = to;
             Type = type;
+            Content = content;
         }
     }
 }

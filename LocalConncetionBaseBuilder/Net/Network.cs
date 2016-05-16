@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using INavigation;
 using Navigation.Graph;
+using Navigation.DataModels;
 
 namespace LocalConncetionBaseBuilder.Net
 {
@@ -19,7 +20,9 @@ namespace LocalConncetionBaseBuilder.Net
 
         public IEdgeCost EdgeCost(int vsrc, int vdst)
         {
-            return new EdgeCost(nodes[vsrc].Position.GetDistanceTo(nodes[vdst].Position));
+            var srcNode = nodes[vsrc];
+            var toDstArch = srcNode.Archs.Find(arch => arch.To == vdst);  
+            return new EdgeCost(toDstArch.Content.GetLength());
         }
 
         public IEdgeCost EstimateCost(int vsrc, int vdst)
@@ -53,6 +56,13 @@ namespace LocalConncetionBaseBuilder.Net
             }
 
             return bestNode;
+        }
+
+        public Route GetArch(int vsrc, int vdst)
+        {
+            var srcNode = nodes[vsrc];
+            var toDstArch = srcNode.Archs.Find(arch => arch.To == vdst);
+            return toDstArch.Content;
         }
 
         public Point GetNodePosition(int nodeIdx)

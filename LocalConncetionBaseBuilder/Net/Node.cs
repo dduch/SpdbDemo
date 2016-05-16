@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using INavigation;
+using Navigation.DataModels;
 
 namespace LocalConncetionBaseBuilder.Net
 {
@@ -18,7 +19,7 @@ namespace LocalConncetionBaseBuilder.Net
             Archs = new List<Arch>();
         }
 
-        public void AddArch(int toNode, ArchType type)
+        public void AddArch(int toNode, ArchType type, Route route)
         {
             int existingId = Archs.FindIndex(arch => arch.To == toNode);
             if(existingId >= 0)
@@ -28,7 +29,7 @@ namespace LocalConncetionBaseBuilder.Net
             }
             else
             {
-                Archs.Add(new Arch(toNode, type));
+                Archs.Add(new Arch(toNode, type, route));
             }
         }
     }

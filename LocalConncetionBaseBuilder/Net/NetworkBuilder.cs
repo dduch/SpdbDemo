@@ -6,29 +6,25 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using System.Globalization;
 using INavigation;
+using Navigation.DataModels;
 using System.IO;
 
 namespace LocalConncetionBaseBuilder.Net
 {
     class Way
     {
-        public long[] Nodes { get; set; }
+        public List<long> Nodes { get; set; }
         public ArchType Type { get; set; }
-        public int Direction { get; set; }
-        public Way(long[] nodes, ArchType type, int direction)
+        public Way(List<long> nodes, ArchType type)
         {
             Nodes = nodes;
             Type = type;
-            Direction = direction;
         }
     }
 
     // Not thread safe
     class NetworkBuilder
-    {
-        private XElement _xmlData;
-        private List<Node> _nodes;
-        private Dictionary<long,int> _nodesMap;
+    { 
 
         private List<Way> ExtractWays(IEnumerable<XElement> allWays)
         {
@@ -83,6 +79,8 @@ namespace LocalConncetionBaseBuilder.Net
                     else if (key == "junction")
                     {
                         valid = true;
+                        directionOverriden = true;
+                        bikeDirection = 1;
                     }
                     else if (key == "highway")
                     {
@@ -115,23 +113,58 @@ namespace LocalConncetionBaseBuilder.Net
                 if (valid)
                 {
                     // TODO: It is possible that some of the nodes will have -1 id
-                    var nodes = way.Elements("nd").Select(ndref => Convert.ToInt64(ndref.Attribute("ref").Value)).ToArray();
+                    var nodes = way.Elements("nd").Select(ndref => Convert.ToInt64(ndref.Attribute("ref").Value)).ToList();
                     var dir = directionOverriden ? bikeDirection : direction;
-                    if (nodes.Length > 1)
-                        ways.Add(new Way(nodes, type, dir));
+                    if (nodes.Count > 0)
+                    {
+                        if(dir >= 0)
+                            ways.Add(new Way(nodes, type));
+                        if(dir <= 0)
+                        {
+                            var reversed = new List<long>(nodes);
+                            reversed.Reverse();
+                            ways.Add(new Way(reversed, type));
+                        }
+                            
+                    }
                 }
             }
 
             return ways;
         }
 
-        private void CreateArch(long from, long to, ArchType type)
+        private List<Way> SplitWays(List<Way> originalWays, IEnumerable<long> allNodes)
         {
-            int fromIdx = _nodesMap[from];
-            int toIdx = _nodesMap[to];
-            Node fromNode = _nodes[fromIdx];
-            Node toNode = _nodes[toIdx];
-            fromNode.AddArch(toIdx, type);
+            var nodesDegrees = new Dictionary<long, int>(allNodes.Count());
+            foreach (var node in allNodes)
+                nodesDegrees.Add(node, 0);
+
+            // Compute nodes degrees
+            for(int i = 0; i < originalWays.Count; ++i)
+            {
+                var waynodes = originalWays[i].Nodes;
+                for (int j = 0; j < waynodes.Count; ++j)
+                    ++nodesDegrees[waynodes[j]];
+            }
+
+            // Split ways
+            List<Way> splittedWays = new List<Way>(originalWays.Count * 2); // Heuristic prediction of how many ways we can get
+            for (int i = 0; i < originalWays.Count; ++i)
+            {
+                var waynodes = originalWays[i].Nodes;
+                int split = 0;
+                for (int j = 1; j < waynodes.Count; ++j)
+                {
+                    if(nodesDegrees[waynodes[j]] > 1 || j == waynodes.Count - 1)
+                    {
+                        var subnodes = waynodes.GetRange(split, j - split + 1);
+                        split = j;
+                        splittedWays.Add(new Way(subnodes, originalWays[i].Type));
+                    }
+                }                  
+            }
+
+            return splittedWays;
         }
 
         public Network BuildNetworkFromXml(string xmlFileName)
@@ -141,19 +174,23 @@ namespace LocalConncetionBaseBuilder.Net
             // This part may seem complicated but optimizations were required
 
             // Parse xml file:
-            _xmlData = XElement.Load(new StreamReader(xmlFileName));
+            XElement xmlData = XElement.Load(new StreamReader(xmlFileName));
 
             // Extract from xml all way elements that are part of ways network
             // and convert them to Way class objects colection
-            var ways = ExtractWays(_xmlData.Elements("way"));
+            var ways = ExtractWays(xmlData.Elements("way"));
 
-            // From ways extract all nodes ids they contain and create look-up table
-            // for speeding up checking if particular node is part of ways network
-            var allNodesIdsLut = new HashSet<long>(ways.SelectMany(w => w.Nodes).Distinct());
+            // From ways extract all points ids they contain and create look-up table
+            // for speeding up checking if particular point is part of ways network
+            var allPointsIdsLut = new HashSet<long>(ways.SelectMany(w => w.Nodes).Distinct());
 
-            // Extract all nodes that are part of ways network
-            var allNodes = _xmlData.Elements("node")
-                .Where(n => allNodesIdsLut.Contains(Convert.ToInt64(n.Attribute("id").Value)))
+            // Split ways, so that except start and endpoint of way there is no connections 
+            // to other ways
+            ways = SplitWays(ways, allPointsIdsLut);
+
+            // Extract all points that are part of ways network
+            var allPointsTmp = xmlData.Elements("node")
+                .Where(n => allPointsIdsLut.Contains(Convert.ToInt64(n.Attribute("id").Value)))
                 .Select(n => new Tuple<long,double,double>(
                     Convert.ToInt64(n.Attribute("id").Value),
                     Convert.ToDouble(n.Attribute("lat").Value, CultureInfo.InvariantCulture),
@@ -162,50 +199,55 @@ namespace LocalConncetionBaseBuilder.Net
                 .ToArray();
 
             // These are no longer needed and probably consume a bit of memory
-            allNodesIdsLut = null;
-            _xmlData = null;
+            allPointsIdsLut = null;
+            xmlData = null;
 
-            _nodes = new List<Node>(allNodes.Length); // List of nodes being part of ways network
-            _nodesMap = new Dictionary<long, int>(allNodes.Length); // Maps node id to index in _nodes list
+            List<Point> allPoints = new List<Point>(allPointsTmp.Length); // List of points being part of ways network
+            Dictionary<long, int> pointsMap = new Dictionary<long, int>(allPointsTmp.Length); // Maps point id to index in allPoints list
 
-            // Fill _nodes and _nodesMap with data from allNodes
-            for (int i = 0; i < allNodes.Length; ++i)
+            // Fill allPoints and pointsMap with data from allPointsTmp
+            for (int i = 0; i < allPointsTmp.Length; ++i)
             {
-                var nodeElem = allNodes[i];
+                var nodeElem = allPointsTmp[i];
                 var id = nodeElem.Item1;
                 var lat = nodeElem.Item2;
                 var lon = nodeElem.Item3;
-                _nodesMap.Add(id, i);
-                _nodes.Add(new Node(new Point(lat, lon)));
+                pointsMap.Add(id, i);
+                allPoints.Add(new Point(lat, lon));
             }
 
             // This is no longer needed and probably consumes a bit of memory
-            allNodes = null;
+            allPointsTmp = null;
+            
+            // Extract all nodes ids
+            var nodesIds = ways.SelectMany(w => new long[] { w.Nodes.First(), w.Nodes.Last() }).Distinct().ToList();
 
+            // Build nodes list
+            List<Node> nodes = new List<Node>(nodesIds.Count); // List of nodes being part of ways network
+            Dictionary<long, int> nodesMap = new Dictionary<long, int>(nodesIds.Count); // Maps point id to index in nodes list
+            for (int i = 0; i < nodesIds.Count; ++i)
+            {
+                var nid = nodesIds[i];
+                var point = allPoints[pointsMap[nid]];
+                nodes.Add(new Node(point));
+                nodesMap.Add(nid, i);
+            }
+
+            // Add archs to nodes
             for (int i = 0; i < ways.Count; ++i)
             {
                 var way = ways[i];
-
-                if (way.Direction >= 0)
-                {
-                    for(int j = 0; j < way.Nodes.Length - 1; ++j)
-                    {
-                        CreateArch(way.Nodes[j], way.Nodes[j + 1], way.Type);
-                    }
-                }
-                if (way.Direction <= 0)
-                {
-                    for (int j = way.Nodes.Length - 1; j > 0; --j)
-                    {
-                        CreateArch(way.Nodes[j], way.Nodes[j - 1], way.Type);
-                    }
-                }
+                var srcNodeId = nodesMap[way.Nodes.First()];
+                var dstNodeId = nodesMap[way.Nodes.Last()];
+                var waypoints = way.Nodes.Select(nid =>  allPoints[pointsMap[nid]]).ToList();
+                nodes[srcNodeId].AddArch(dstNodeId, way.Type, new Route(waypoints));
             }
 
-            var net = new Network(_nodes);
+            Console.WriteLine("All ways count = " + ways.Count);
+            Console.WriteLine("All points count = " + allPoints.Count);
+            Console.WriteLine("All nodes count = " + nodesIds.Count);
 
-            _nodes = null;
-            _nodesMap = null;
+            var net = new Network(nodes);
 
             return net;
         }

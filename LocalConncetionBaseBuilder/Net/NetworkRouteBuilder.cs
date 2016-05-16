@@ -23,14 +23,14 @@ namespace LocalConncetionBaseBuilder.Net
             var vsrc = _net.NearestNode(src);
             var vdst = _net.NearestNode(dst);
             var path = Dijkstra.FindBestPath(_net, vsrc, vdst);
-            var points = path.Select(node => _net.GetNodePosition(node)).ToList();
 
-            if (!points.First().Equals(src))
-                points.Insert(0, src);
-            if (!points.Last().Equals(dst))
-                points.Add(dst);
+            Route route = new Route(new List<Point>() { src });
+            for(int i = 0; i < path.Count - 1; ++i)
+            {
+                route.Append(_net.GetArch(path[i], path[i + 1]));
+            }
+            route.Append(new Route(new List<Point>() { dst }));
 
-            var route = new Route(points);
             return route.Serialize();
         }
 

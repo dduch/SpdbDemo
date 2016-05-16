@@ -132,7 +132,7 @@ namespace LocalConncetionBaseBuilder
 
             var wr = new BinaryWriter(new FileStream(dbfile, FileMode.Append, FileAccess.Write));
 
-            Console.WriteLine("Started constructing from: " + i + " " + j);
+            Console.WriteLine("Started constructing from [" + i + "] [" + j + "]");
 
             bool completed = false;
             while (process || !completed)
@@ -189,11 +189,11 @@ namespace LocalConncetionBaseBuilder
                 }
                 catch (ThreadInterruptedException)
                 {
-                    Console.WriteLine("Construction interrupted after: " + i + " " + j);
+                    Console.WriteLine("Construction interrupted after [" + i + "] [" + j + "]");
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine("Exception occured: " + ex.Message);
+                    Console.WriteLine("Exception for connection [" + i + "] [" + j + "] : " + ex.Message);
 
                     if(retry)
                     {
@@ -202,12 +202,14 @@ namespace LocalConncetionBaseBuilder
                     }
                     else
                     {
-                        i = (j - 1) >= 0 ? i : i - 1;
-                        j = (j - 1) >= 0 ? j - 1 : n - 1;
-                        process = false;
-                        completed = true;
-                        Console.WriteLine("Stopping construction");
-                        downloader = null;
+                        //i = (j - 1) >= 0 ? i : i - 1;
+                        //j = (j - 1) >= 0 ? j - 1 : n - 1;
+                        //process = false;
+                        //completed = true;
+                        //Console.WriteLine("Stopping construction");
+                        //downloader = null;
+
+                        ++j; // TMP
                     }                  
                 }
             }
