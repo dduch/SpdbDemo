@@ -11,7 +11,7 @@ using System.Xml.Linq;
 
 namespace LocalConncetionBaseBuilder
 {
-    class RouteBuilder
+    class ServiceRouteBuilder : IRouteBuilder
     {
         private Dictionary<string, string> parameters = new Dictionary<string, string>
         {
@@ -21,9 +21,6 @@ namespace LocalConncetionBaseBuilder
             ["units"] = "metric",
         };
 
-        // Returns array of floats:
-        // [p(0).Latitude, p(0).Longitude, p(1).Latitude, p(1).Longitude, ... , p(n-1).Latitude, p(n-1).Longitude, routeLength]
-        // where p(i) is i-th point of route and routeLength is full length of route (in meters)
         public float[] BuildRoute(Point src, Point dst)
         {
             parameters["origin"] = src.Latitude.ToString(CultureInfo.InvariantCulture) + "," + src.Longitude.ToString(CultureInfo.InvariantCulture);

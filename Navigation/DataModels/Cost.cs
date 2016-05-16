@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Navigation.Graph;
 
-namespace Navigation.Graph
+namespace Navigation.DataModels
 {
-    struct Cost
+    class Cost : IEdgeCost
     {
         public double Major;
         public double Minor;
@@ -19,7 +20,7 @@ namespace Navigation.Graph
 
         private static readonly double projectionFactor = 1000000.0;
 
-        public double ToDouble()
+        public double Value()
         {
             return Major * projectionFactor + Minor;
         }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using INavigation;
+using Navigation.DataModels;
 using Navigation.Graph;
 using Navigation.DataProviders;
 
@@ -40,7 +41,7 @@ namespace Navigation.DataModels
             return nodes.Length;
         }
 
-        public Cost EdgeCost(int vsrc, int vdst)
+        public IEdgeCost EdgeCost(int vsrc, int vdst)
         {
             var srcId = nodes[vsrc].Id;
             var dstId = nodes[vdst].Id;
@@ -49,7 +50,7 @@ namespace Navigation.DataModels
             return new Cost(pathCost, pathLength + metric.ChangeDistanceEquivalent);
         }
 
-        public Cost EstimateCost(int vsrc, int vdst)
+        public IEdgeCost EstimateCost(int vsrc, int vdst)
         {
             var srcId = nodes[vsrc].Id;
             var dstId = nodes[vdst].Id;

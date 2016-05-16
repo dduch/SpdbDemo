@@ -13,6 +13,7 @@ using System.Threading;
 using INavigation;
 using Navigation.DataProviders;
 using System.Diagnostics;
+using LocalConncetionBaseBuilder.Net;
 
 namespace LocalConncetionBaseBuilder
 {
@@ -22,7 +23,7 @@ namespace LocalConncetionBaseBuilder
         static void Main(string[] args)
         {
             Station[] stations = StationsManager.Get().ToArray();
-            BaseBuilder builder = new BaseBuilder(stations, "dbfile");
+            BaseBuilder builder = new BaseBuilder(stations, "dbfile", new ServiceRouteBuilder());
 
             Console.WriteLine("Connection builder started");
             Console.WriteLine(stations.Length + " stations loaded");
@@ -33,30 +34,34 @@ namespace LocalConncetionBaseBuilder
                 try
                 {
 
-                    var cmd = Console.ReadLine();
+                    var cmd = Console.ReadLine().Split(new char[] { ' ' });
 
-                    if (cmd == "start")
+                    if (cmd[0] == "download")
                     {
-                        builder.StartDownload();
+                        builder = new BaseBuilder(stations, "dbfile", new ServiceRouteBuilder());
                     }
-                    else if (cmd == "continue")
+                    else if (cmd[0] == "start")
                     {
-                        builder.ContinueDownload();
+                        builder.StartConstruction();
                     }
-                    else if (cmd == "pause")
+                    else if (cmd[0] == "continue")
                     {
-                        builder.StopDownload();
+                        builder.ContinueConstruction();
                     }
-                    else if (cmd == "update")
+                    else if (cmd[0] == "pause")
+                    {
+                        builder.StopConstruction();
+                    }
+                    else if (cmd[0] == "update")
                     {
                         builder.Update();
                     }
-                    else if (cmd == "status")
+                    else if (cmd[0] == "status")
                     {
                         var status = builder.Status();
                         Console.WriteLine((status.Item1 ? "Running" : "Stopped") + ". Progress: " + status.Item2 + "%");
                     }
-                    else if (cmd == "exit")
+                    else if (cmd[0] == "exit")
                     {
                         var status = builder.Status();
                         if (status.Item1 == true) // download is running
@@ -65,31 +70,44 @@ namespace LocalConncetionBaseBuilder
                             var response = Console.ReadLine();
                             if (response == "Y")
                             {
-                                builder.StopDownload();
+                                builder.StopConstruction();
                                 break;
                             }
                         }
                         else
                             break;
                     }
-                    else if (cmd == "help")
+                    else if (cmd[0] == "help")
                     {
                         Console.WriteLine("Avaliable commands:");
-                        Console.WriteLine("* start - starts new download");
-                        Console.WriteLine("* continue - continues paused download");
-                        Console.WriteLine("* pause - stops download");
+                        Console.WriteLine("* from <resource> - switches program to build connections db from local resource");
+                        Console.WriteLine("* download - switches program to build connections uisng web service");
+                        Console.WriteLine("* start - starts building new db");
+                        Console.WriteLine("* continue - continues paused build");
+                        Console.WriteLine("* pause - stops build");
                         Console.WriteLine("* update - updates and cleans existing database");
-                        Console.WriteLine("* status - shows current download progress");
+                        Console.WriteLine("* status - shows current build progress");
                         Console.WriteLine("* exit - exists programm, stops download if running");
                         Console.WriteLine("* help - displays this help");
                     }
-                    else if (cmd == "special")
+                    else if (cmd[0] == "from")
                     {
-                        Special(stations);
+                        var xmlBuilder = new NetworkBuilder();
+                        var net = xmlBuilder.BuildNetworkFromXml(cmd[1]);
+                        builder = new BaseBuilder(stations, "dbfile", new NetworkRouteBuilder(net), false);
+                        Console.WriteLine("Resource loaded successfully. You can start building.");
+                    }
+                    else if (cmd[0] == "test")
+                    {
+                        var xmlBuilder = new NetworkBuilder();
+                        var net = xmlBuilder.BuildNetworkFromXml("mapfile.osm");
+                        builder = new BaseBuilder(stations, "dbfile", new NetworkRouteBuilder(net), false);
+                        Console.WriteLine("Resource loaded successfully. Starting build ...");
+                        builder.StartConstruction();
                     }
                     else
                     {
-                        Console.WriteLine("Unknown command: " + cmd + " Try 'help'");
+                        Console.WriteLine("Unknown command: '" + cmd[0] + "'. Try 'help'");
                     }
                 }
                 catch (Exception ex)
@@ -99,46 +117,13 @@ namespace LocalConncetionBaseBuilder
             }
         }
 
-        static void Special(Station[] stations)
-        {
-
-            //int quant = 1;
-            //int shownCategories = 25 / quant;
-            //int allCategories = 50 / quant;
-            //int[] categories = new int[allCategories];
-
-            //int n = stations.Length;
-            //for(int i = 0; i < n; ++i)
-            //    for(int j = 0; j < n; ++j)
-            //    {
-            //        if (i == j)
-            //            continue;
-
-            //        var dist = stations[i].Position.GetDistanceTo(stations[j].Position);
-
-            //        var id = (int)(dist / 1000) / quant;
-
-            //        for(int k = id; k < allCategories; ++k)
-            //            ++categories[k];
-            //    }
-
-            //int all = n * n - n;
-            //for(int i = 0; i < shownCategories; ++i)
-            //{
-            //    Console.WriteLine("Up to " + (i+1)*quant + "km ---> " + categories[i]*100.0/all);
-            //}
-
-            int lcnt = 0;
-            int gcnt = 0;
-            for(int i = 0; i < stations.Length; ++i)
-            {
-                if (stations[i].Id < 0 + 6000) ++lcnt;
-                if (stations[i].Id > 64000 + 6000) ++gcnt;
-            }
-
-            Console.WriteLine("lcnt = " + lcnt);
-            Console.WriteLine("gcnt = " + gcnt);
-
-        }
+    //    static void Special(Station[] stations)
+    //    {
+    //        var xmlBuilder = new NetworkBuilder();
+    //        var net = xmlBuilder.BuildNetworkFromXml("mapfile.osm");
+    //        var builder = new BaseBuilder(stations, "dbfile", new NetworkRouteBuilder(net), false);
+    //        Console.WriteLine("Resource loaded successfully. Starting build ...");
+    //        builder.StartConstruction();
+    //    }
     }
 }

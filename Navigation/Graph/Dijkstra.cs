@@ -7,7 +7,7 @@ using Priority_Queue;
 
 namespace Navigation.Graph
 {
-    class Dijkstra
+    public class Dijkstra
     {
         class DijkstraNode : FastPriorityQueueNode
         {
@@ -56,7 +56,7 @@ namespace Navigation.Graph
 
                 foreach (var v in graph.Neighbors(u))
                 {
-                    var alt = dist[u] + graph.EdgeCost(u, v).ToDouble();
+                    var alt = dist[u] + graph.EdgeCost(u, v).Value();
                     if (alt < dist[v])
                     {
                         dist[v] = alt;
