@@ -94,14 +94,15 @@ namespace LocalConncetionBaseBuilder
                     {
                         var xmlBuilder = new NetworkBuilder();
                         var net = xmlBuilder.BuildNetworkFromXml(cmd[1]);
-                        builder = new BaseBuilder(stations, "dbfile", new NetworkRouteBuilder(net), false);
+                        builder = new BaseBuilder(stations, "dbfile", new NetworkRouteBuilder(net, stations), false);
                         Console.WriteLine("Resource loaded successfully. You can start building.");
                     }
                     else if (cmd[0] == "test")
                     {
                         var xmlBuilder = new NetworkBuilder();
                         var net = xmlBuilder.BuildNetworkFromXml("mapfile.osm");
-                        builder = new BaseBuilder(stations, "dbfile", new NetworkRouteBuilder(net), false);
+                        xmlBuilder = null;
+                        builder = new BaseBuilder(stations, "dbfile", new NetworkRouteBuilder(net, stations), false);
                         Console.WriteLine("Resource loaded successfully. Starting build ...");
                         builder.StartConstruction();
                     }

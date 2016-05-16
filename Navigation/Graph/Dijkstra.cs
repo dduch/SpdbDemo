@@ -19,10 +19,18 @@ namespace Navigation.Graph
             }
         }
 
-        public static List<int> FindBestPath(IGraph graph, int src, int dst)
+        private static List<int> ReconstructPath(int u, int[] predecessors)
         {
-            if (src == dst)
-                return new List<int>() { src };
+            var path = new LinkedList<int>();
+            for (int v = u; v != -1; v = predecessors[v])
+                path.AddFirst(v);
+            return path.ToList();
+        }
+
+        public static List<int>[] FindBestPaths(IGraph graph, int src, int[] dst)
+        {
+            var dstToFound = new HashSet<int>(dst);
+            var paths = new List<int>[dst.Length];
 
             int n = graph.VerticesCount();
             double[] dist = new double[n];
@@ -45,13 +53,18 @@ namespace Navigation.Graph
             {
                 var u = Q.Dequeue().Vertex;
 
-                if (u == dst)
+                if (dstToFound.Contains(u))
                 {
-                    // We reached destination, time to reconstruct the path
-                    var path = new LinkedList<int>();
-                    for (int v = u; v != -1; v = prev[v])
-                        path.AddFirst(v);
-                    return path.ToList();
+                    dstToFound.Remove(u);
+                    if(dstToFound.Count == 0)
+                    {
+                        // We reached all destinations, time to reconstruct the paths
+                        paths = new List<int>[dst.Length];
+                        for(int i = 0; i < paths.Length; ++i)
+                            paths[i] = ReconstructPath(dst[i], prev);
+
+                        return paths;
+                    }               
                 }
 
                 foreach (var v in graph.Neighbors(u))
@@ -69,7 +82,26 @@ namespace Navigation.Graph
                 }
             }
 
-            throw new Exception("Path does not exists!");
+            // Reaching this point means that some paths were not found
+            for (int i = 0; i < paths.Length; ++i)
+            {
+                var pathTmp = ReconstructPath(dst[i], prev);
+                if (pathTmp.First() != src)
+                    paths[i] = null;
+                else
+                    paths[i] = pathTmp;
+            }
+
+            return paths;
+        }
+
+        public static List<int> FindBestPath(IGraph graph, int src, int dst)
+        {
+            var result = FindBestPaths(graph, src, new int[] { dst })[0];
+            if (result == null)
+                throw new Exception("Path does not exists!");
+
+            return result;
         }
     }
 }
