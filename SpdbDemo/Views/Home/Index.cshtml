@@ -71,7 +71,7 @@
             </md-content>
         </md-card>
         <md-card flex="75" flex-xs="100" flex-sm="100">
-            <div class="FlexItem layout-row" layout="row" style="max-height: 70px;">
+            <div class="FlexItem layout-row" layout="row" layout-xs="column" layout-sm="column">
                 <div flex="45" flex-xs="100" flex-sm="100" layout="row">
                     <div flex="10">
                         <img src="~/Resources/start.png">
@@ -120,8 +120,8 @@
                         </md-autocomplete>
                     </div>
                 </div>
-                <div flex="10" style="padding: 7px; margin-left: 55px;" class="FlexItem" layout="row" layout-align="center" ng-click="onSearchClickAction()">
-                    <div>
+                <div flex="10" flex-sm="100" flex-xs="100" style="padding: 7px;" class="FlexItem" layout="row" layout-align="center" ng-click="onSearchClickAction()">
+                    <div align="center">
                         <md-button class="md-raised md-primary">Search</md-button>
                     </div>
                 </div>
