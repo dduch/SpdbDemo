@@ -55,10 +55,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DataModels\Cost.cs" />
     <Compile Include="DataModels\Station.cs" />
     <Compile Include="DataProviders\IGeoDataProvider.cs" />
     <Compile Include="DataProviders\StationsManager.cs" />
-    <Compile Include="Graph\Cost.cs" />
     <Compile Include="Graph\Dijkstra.cs" />
     <Compile Include="DataModels\Route.cs" />
     <Compile Include="DataModels\Network.cs" />
@@ -66,6 +66,7 @@
     <Compile Include="DataModels\VeturiloStations.cs" />
     <Compile Include="DataProviders\GeoDataProvider.cs" />
     <Compile Include="DataProviders\Rootobject.cs" />
+    <Compile Include="Graph\IEdgeCost.cs" />
     <Compile Include="Graph\IGraph.cs" />
     <Compile Include="NavigationResolver.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

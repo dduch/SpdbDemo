@@ -7,7 +7,7 @@ namespace Navigation.DataModels
 {
     // Model of route consisting of sequence of points in space
     // In this model empty routes (with no elements) are allowed
-    class Route : IRoute
+    public class Route : IRoute
     {
         private List<Point> points;
         private double routeLength;

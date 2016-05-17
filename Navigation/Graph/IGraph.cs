@@ -8,7 +8,7 @@ namespace Navigation.Graph
 {
     // Interface required by graph searching algorithms
     // Integer number are used to describe vertexes
-    interface IGraph
+    public interface IGraph
     {
         // Returns number of vertexes in graph
         // If result is n then graph has vertexes in 0..n-1
@@ -19,10 +19,10 @@ namespace Navigation.Graph
 
         // Returns cost of edge between vertexes vsrc and vdst
         // Edge between vsrc and vdst must exist
-        Cost EdgeCost(int vsrc, int vdst);
+        IEdgeCost EdgeCost(int vsrc, int vdst);
 
         // Returns heuristic cost approximation of getting from vsrc to vdst
         // Edge between vsrc and vdst may not exist
-        Cost EstimateCost(int vsrc, int vdst);
+        IEdgeCost EstimateCost(int vsrc, int vdst);
     }
 }

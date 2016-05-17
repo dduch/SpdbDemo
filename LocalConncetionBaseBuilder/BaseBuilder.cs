@@ -18,18 +18,19 @@ namespace LocalConncetionBaseBuilder
         private double progress = 0.0;
         private Station[] stations;
         private Thread downloader = null;
-        private RouteBuilder routeBuilder = new RouteBuilder();
-        private readonly int sleepInterval = 1;
-        private readonly int sleepTime = 250; // 250 ms
+        private IRouteBuilder routeBuilder;
         private readonly int postExceptionSleepTime = 2 * 1000; // 2 s
+        private bool retry;
 
-        public BaseBuilder(Station[] stations, string dbfile)
+        public BaseBuilder(Station[] stations, string dbfile, IRouteBuilder routeBuilder, bool retry = true)
         {
             this.stations = stations;
             this.dbfile = dbfile;
+            this.routeBuilder = routeBuilder;
+            this.retry = retry;
         }
 
-        public void StartDownload()
+        public void StartConstruction()
         {
             // Reset dbfile and progress
             File.Delete(dbfile);
@@ -38,11 +39,11 @@ namespace LocalConncetionBaseBuilder
             progress = 0.0;
 
             process = true;
-            downloader = new Thread(() => DownloadData());
+            downloader = new Thread(() => Construct());
             downloader.Start();
         }
 
-        public void StopDownload()
+        public void StopConstruction()
         {
             process = false;
             if (downloader != null && (downloader.ThreadState == ThreadState.Running || downloader.ThreadState == ThreadState.WaitSleepJoin))
@@ -50,12 +51,12 @@ namespace LocalConncetionBaseBuilder
             downloader = null;
         }
 
-        public void ContinueDownload()
+        public void ContinueConstruction()
         {
             if (downloader == null)
             {
                 process = true;
-                downloader = new Thread(() => DownloadData());
+                downloader = new Thread(() => Construct());
                 downloader.Start();
             }
         }
@@ -102,12 +103,12 @@ namespace LocalConncetionBaseBuilder
             Console.WriteLine("Cleanup completed. Found " + redundantConnectionsCnt + " redundant connections");
 
             int allConnections = stations.Length * stations.Length - stations.Length;
-            Console.WriteLine("Downloading " + (allConnections - downloadedConnections.Count) + " missing connections");
+            Console.WriteLine("Constructing " + (allConnections - downloadedConnections.Count) + " missing connections");
 
             File.WriteAllText(statusfile, "0 0");
             progress = 0.0;
             process = true;
-            downloader = new Thread(() => DownloadData(downloadedConnections));
+            downloader = new Thread(() => Construct(downloadedConnections));
             downloader.Start();
         }
 
@@ -117,7 +118,7 @@ namespace LocalConncetionBaseBuilder
         }
 
 
-        private void DownloadData(HashSet<KeyValuePair<int, int>> downloadedConnections = null)
+        private void Construct(HashSet<KeyValuePair<int, int>> downloadedConnections = null)
         {
             string line = string.Empty;
             int n = stations.Length;
@@ -129,7 +130,7 @@ namespace LocalConncetionBaseBuilder
 
             var wr = new BinaryWriter(new FileStream(dbfile, FileMode.Append, FileAccess.Write));
 
-            Console.WriteLine("Started downloading from: " + i + " " + j);
+            Console.WriteLine("Started constructing from [" + i + "] [" + j + "]");
 
             bool completed = false;
             while (process || !completed)
@@ -145,7 +146,7 @@ namespace LocalConncetionBaseBuilder
                                 if (!process)
                                 {
                                     i = (j - 1) >= 0 ? i : i - 1;
-                                    j = (j - 1) >= 0 ? j : n - 1;
+                                    j = (j - 1) >= 0 ? j - 1 : n - 1;
                                     completed = true;
                                     throw new ThreadInterruptedException();
                                 }
@@ -169,10 +170,6 @@ namespace LocalConncetionBaseBuilder
                                     wr.Write(route[k]);
 
                                 progress = 100.0 * (i * n + (j + 1)) / ((n * n));
-
-                                // Sleep to not overload service
-                                if ((i * n + (j + 1)) % sleepInterval == 0)
-                                    Thread.Sleep(sleepTime);
                             }
                             ++j;
                         }
@@ -182,17 +179,27 @@ namespace LocalConncetionBaseBuilder
                     process = false;
                     completed = true;
                     progress = 100.0;
-                    Console.WriteLine("Download completed");
+                    Console.WriteLine("Construction completed");
                 }
                 catch (ThreadInterruptedException)
                 {
-                    Console.WriteLine("Download interrupted after: " + i + " " + j);
+                    Console.WriteLine("Construction interrupted after [" + i + "] [" + j + "]");
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine("Exception occured: " + ex.Message);
-                    // Sleep some time after exception occured
-                    Thread.Sleep(postExceptionSleepTime);
+                    Console.WriteLine("Exception for connection [" + i + "] [" + j + "] : " + ex.Message);
+
+                    if(retry)
+                    {
+                        // Sleep some time after exception occured
+                        // and then try to get connection again
+                        Thread.Sleep(postExceptionSleepTime);
+                    }
+                    else
+                    {
+                        // Proceed to next connection
+                        ++j;
+                    }                  
                 }
             }
             wr.Close();
