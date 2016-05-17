@@ -103,11 +103,6 @@ textarea {
     border-bottom: 1px solid #ddd;
 }
 
-table .cr {
-    min-width: 30px;    
-}
-
-
 
 table.scroll tbody,
 table.scroll thead { display: block; }

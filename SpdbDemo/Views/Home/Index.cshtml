@@ -2,23 +2,22 @@
 <script src="http://www.openstreetmap.org/openlayers/OpenStreetMap.js"></script>
 
 <div ng-app="FormApp">
-    <div ng-controller="FormController" layout="row" layout-xs="column">
-        <md-card flex="25" layout="column" flex-xs="100">
+    <div ng-controller="FormController" layout="row" layout-xs="column" layout-sm="column">
+        <md-card flex="25" layout="column" flex-xs="100" flex-sm="100">
             <md-content class="md-no-momentum" flex layout="column" layout-margin>
                 <div class="FlexItem layout-column" layout="column" layout-align="left">
                     <div>
                         <div class="md-block">
-                            <table>
+                            <table style="width: 100%">
                                 <tr>
-                                    <td>
+                                    <td style="width: 50px;">
                                         <md-icon la md-svg-src="~/Resources/location48.svg"></md-icon>
                                     </td>
                                     <td width="3px"></td>
-                                    <td>
+                                    <td align="left">
                                         <span> Use my location</span>
                                     </td>
-                                    <td width="115px"></td>
-                                    <td>
+                                    <td align="right" style="width: 40px;">
                                         <span>
                                             <md-switch class="md-primary" ng-change="onUseMyLocationChange()"
                                                        ng-model="navigation.useMyLocation">
@@ -39,7 +38,7 @@
                 <div layout="">
                     <md-slider flex="" min="10" max="50" ng-model="navigation.speed" aria-label="speed" id="speed-slider" class="md-primary">
                     </md-slider>
-                    <div flex="20" layout="" layout-align="center center">
+                    <div flex="25" flex-xs="15" flex-sm="10" layout="" layout-align="right" style="max-width: 80px !important; max-height: 30px !important;">
                         <input ng-disabled="true" flex="" min="1" max="50" style="margin-left: 20px" ng-model="navigation.speed" aria-label="speed" aria-controls="speed-slider" type="number">
                     </div>
                 </div>
@@ -71,9 +70,9 @@
                 </div>
             </md-content>
         </md-card>
-        <md-card flex="75" flex-xs="100">
-            <div class="FlexItem layout-row" layout="row" style="max-height: 70px;">
-                <div flex="45" flex-xs="100" layout="row">
+        <md-card flex="75" flex-xs="100" flex-sm="100">
+            <div class="FlexItem layout-row" layout="row" layout-xs="column" layout-sm="column">
+                <div flex="45" flex-xs="100" flex-sm="100" layout="row">
                     <div flex="10">
                         <img src="~/Resources/start.png">
                     </div>
@@ -97,7 +96,7 @@
                         </md-autocomplete>
                     </div>
                 </div>
-                <div flex="45" flex-xs="100" layout="row">
+                <div flex="45" flex-xs="100" flex-sm="100" layout="row">
                     <div flex="10">
                         <img src="~/Resources/stop.png">
                     </div>
@@ -121,8 +120,8 @@
                         </md-autocomplete>
                     </div>
                 </div>
-                <div flex="10" style="padding: 7px; margin-left: 55px;" class="FlexItem" layout="row" layout-align="center" ng-click="onSearchClickAction()">
-                    <div>
+                <div flex="10" flex-sm="100" flex-xs="100" style="padding: 7px;" class="FlexItem" layout="row" layout-align="center" ng-click="onSearchClickAction()">
+                    <div align="center">
                         <md-button class="md-raised md-primary">Search</md-button>
                     </div>
                 </div>
