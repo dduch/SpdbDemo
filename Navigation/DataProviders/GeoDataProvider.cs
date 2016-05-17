@@ -18,33 +18,33 @@ namespace Navigation.DataProviders
 {
     public class GeoDataProvider : IGeoDataProvider
     {
-        private Dictionary<string, string> Parameters = new Dictionary<string, string>
-        {
-            ["flat"] = "",
-            ["flon"] = "",
-            ["tlat"] = "",
-            ["tlon"] = "pl",
-            ["v"] = "bicycle",
-            ["fast"] = "0",
-            ["format"] = "geojson",
-            ["geometry"] = "1",
-            ["distance"] = "v",
-            ["instructions"] = "0",
-            ["lang"] = "pl",
-        };
+        //private Dictionary<string, string> Parameters = new Dictionary<string, string>
+        //{
+        //    ["flat"] = "",
+        //    ["flon"] = "",
+        //    ["tlat"] = "",
+        //    ["tlon"] = "",
+        //    ["v"] = "foot",
+        //    ["fast"] = "0",
+        //    ["format"] = "geojson",
+        //    ["geometry"] = "1",
+        //    ["distance"] = "v",
+        //    ["instructions"] = "0",
+        //    ["lang"] = "pl",
+        //};
 
-        private static Dictionary<KeyValuePair<int, int>, Route> StationsRoutes = new Dictionary<KeyValuePair<int, int>, Route>();
+        private static Dictionary<KeyValuePair<int, int>, float[]> StationsRoutes = new Dictionary<KeyValuePair<int, int>, float[]>();
 
         static GeoDataProvider()
         {
-            BinaryReader reader = new BinaryReader(new MemoryStream(Resources.stationsRoutesDB));
-            Dictionary<int, bool> handledStations = StationsManager.Get().ToDictionary(
+            string connectionsDbFileName = "stationsRoutesDB";
+            BinaryReader reader = new BinaryReader(new FileStream(connectionsDbFileName, FileMode.Open, FileAccess.Read));
+            Dictionary <int, bool> handledStations = StationsManager.SafeGet().ToDictionary(
                 station => station.Id,
                 station => false
             );
 
-            int count = Resources.stationsRoutesDB.Length;
-            while(count > 0)
+            while(reader.BaseStream.Position != reader.BaseStream.Length)
             {
                 int idOfsett = 6000;
                 int id1 = (int)reader.ReadUInt16() + idOfsett;
@@ -55,18 +55,17 @@ namespace Navigation.DataProviders
                 {
                     points[k] = reader.ReadSingle();
                 }
-                count -= 3*2 + n*4;
 
                 if (handledStations.ContainsKey(id1) && handledStations.ContainsKey(id2))
                 {
-                    StationsRoutes.Add(new KeyValuePair<int, int>(id1, id2), new Route(points));
+                    StationsRoutes.Add(new KeyValuePair<int, int>(id1, id2), points);
                     handledStations[id1] = true;
                     handledStations[id2] = true;
                 }
             }
 
-            //if (handledStations.ContainsValue(false))
-            //    throw new Exception("Connections database requires update!");
+            if (handledStations.ContainsValue(false))
+                throw new Exception("Connections database requires update!");
 
         }
 
@@ -75,36 +74,44 @@ namespace Navigation.DataProviders
             StationsManager.Prefetch();
         }
 
-        public IRoute GetRoute(Point source, Point destination)
-        {
-            Parameters["flat"] = source.Latitude.ToString(CultureInfo.InvariantCulture);
-            Parameters["flon"] = source.Longitude.ToString(CultureInfo.InvariantCulture);
-            Parameters["tlat"] = destination.Latitude.ToString(CultureInfo.InvariantCulture);
-            Parameters["tlon"] = destination.Longitude.ToString(CultureInfo.InvariantCulture);
+        //public IRoute GetRoute(Point source, Point destination)
+        //{
+        //    Parameters["flat"] = source.Latitude.ToString(CultureInfo.InvariantCulture);
+        //    Parameters["flon"] = source.Longitude.ToString(CultureInfo.InvariantCulture);
+        //    Parameters["tlat"] = destination.Latitude.ToString(CultureInfo.InvariantCulture);
+        //    Parameters["tlon"] = destination.Longitude.ToString(CultureInfo.InvariantCulture);
 
-            var url = string.Format(Settings.Default.RouteService,
-                            string.Join("&", Parameters.Select(kvp => string.Format("{0}={1}", kvp.Key, kvp.Value))));
+        //    var url = string.Format(Settings.Default.RouteService,
+        //                    string.Join("&", Parameters.Select(kvp => string.Format("{0}={1}", kvp.Key, kvp.Value))));
+        //    Rootobject route = null;
 
-            WebRequest request = WebRequest.Create(url);
-            request.Method = "GET";
-            WebResponse webResp = request.GetResponse();
-            Rootobject route = null;
-            using (var reader = new StreamReader(webResp.GetResponseStream()))
-            {
-                JavaScriptSerializer js = new JavaScriptSerializer();
-                var jsonResponse = reader.ReadToEnd();
-                route = (Rootobject)js.Deserialize(jsonResponse, typeof(Rootobject));
-            }
+        //    try
+        //    {
+        //        WebRequest request = WebRequest.Create(url);
+        //        request.Method = "GET";
+        //        WebResponse webResp = request.GetResponse();
+                
+        //        using (var reader = new StreamReader(webResp.GetResponseStream()))
+        //        {
+        //            JavaScriptSerializer js = new JavaScriptSerializer();
+        //            var jsonResponse = reader.ReadToEnd();
+        //            route = (Rootobject)js.Deserialize(jsonResponse, typeof(Rootobject));
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw new Exception("Failed to construct route: " + ex.Message, ex);
+        //    }
 
-            List<Point> foundedRoute = new List<Point>();
+        //    List<Point> foundedRoute = new List<Point>();
 
-            foreach(float[] coordinate in route.coordinates)
-            {
-                foundedRoute.Add(new Point(coordinate[1], coordinate[0]));
-            }
+        //    foreach(float[] coordinate in route.coordinates)
+        //    {
+        //        foundedRoute.Add(new Point(coordinate[1], coordinate[0]));
+        //    }
 
-            return new Route(foundedRoute, Convert.ToDouble(route.properties.distance, CultureInfo.InvariantCulture));
-        }
+        //    return new Route(foundedRoute, 1000.0 * Convert.ToDouble(route.properties.distance, CultureInfo.InvariantCulture));
+        //}
 
         public int GetNearestStation(Point p, bool nonempty = false)
         {
@@ -112,7 +119,7 @@ namespace Navigation.DataProviders
             double bestDistance = Double.PositiveInfinity;
             int nearestStation = -1;
 
-            foreach (var station in StationsManager.Get())
+            foreach (var station in StationsManager.SafeGet())
             {
                 if (nonempty && !station.Bikes)
                     continue;
@@ -125,22 +132,25 @@ namespace Navigation.DataProviders
                 }
             }
 
+            if (nearestStation < 0)
+                throw new Exception("Cannot find relevant station near " + p.Latitude + ";" + p.Longitude);
+
             return nearestStation;   
         }
 
         public IEnumerable<Station> GetStations()
         { 
-            return StationsManager.Get();
+            return StationsManager.SafeGet();
         }
 
         public double GetPathLength(int startStation, int endStation)
         {
-            return StationsRoutes[new KeyValuePair<int, int>(startStation, endStation)].GetLength();
+            return StationsRoutes[new KeyValuePair<int, int>(startStation, endStation)].Last();
         }
 
         public IRoute GetRoute(int source, int destination)
         {
-            return StationsRoutes[new KeyValuePair<int, int>(source, destination)];
+            return new Route(StationsRoutes[new KeyValuePair<int, int>(source, destination)]);
         }
     }
 }

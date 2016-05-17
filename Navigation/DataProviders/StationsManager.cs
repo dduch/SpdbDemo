@@ -75,6 +75,19 @@ namespace Navigation.DataProviders
                                 node.Attribute("bikes").Value != "0"
                             ));
                         }
+
+                        // TMP:
+                        //stationsList.RemoveAt(147);
+                        //stationsList.RemoveAt(132);
+                        //stationsList.RemoveAt(127);
+                        //stationsList.RemoveAt(116);
+                        //stationsList.RemoveAt(113);
+                        //stationsList.RemoveAt(99);
+                        //stationsList.RemoveAt(68);
+                        //stationsList.RemoveAt(40);
+                        //stationsList.RemoveAt(0);
+
+
                         _stations = stationsList;
 
                         // 2. Restart timer
@@ -114,6 +127,28 @@ namespace Navigation.DataProviders
                 case Status.EXPIRED: Fetch();  break;
             }
             return _stations;
+        }
+
+        public static IEnumerable<Station> SafeGet(int attempts = 3, int interval = 1000)
+        {
+            Exception lastEx = null;
+
+            while(attempts-- > 0)
+            {
+                try
+                {
+                    var result = Get();
+                    return result;
+                }
+                catch(Exception ex)
+                {
+                    lastEx = ex;
+                    if (interval > 0)
+                        Thread.Sleep(interval);
+                }
+            }
+
+            throw new Exception("Failed to get stations. Reason: " + ((lastEx != null) ? lastEx.Message : "nagative attempts value"));
         }
     }
 }

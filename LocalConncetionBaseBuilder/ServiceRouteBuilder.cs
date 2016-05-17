@@ -9,6 +9,7 @@ using System.Net;
 using System.IO;
 using System.Xml.Linq;
 using System.Threading;
+using System.Web.Script.Serialization;
 
 namespace LocalConncetionBaseBuilder
 {
@@ -16,52 +17,52 @@ namespace LocalConncetionBaseBuilder
     {
         private Dictionary<string, string> parameters = new Dictionary<string, string>
         {
-            ["origin"] = "",
-            ["destination"] = "",
-            ["mode"] = "bicycling",
-            ["units"] = "metric",
+            ["flat"] = "",
+            ["flon"] = "",
+            ["tlat"] = "",
+            ["tlon"] = "",
+            ["v"] = "bicycle",
+            ["fast"] = "1",
+            ["format"] = "geojson",
+            ["geometry"] = "1",
+            ["distance"] = "v",
+            ["instructions"] = "0",
+            ["lang"] = "pl",
         };
 
-        private readonly int sleepTime = 250; // 250 ms
+        private readonly int sleepTime = 100;
 
         public float[] BuildRoute(Point src, Point dst)
         {
-            parameters["origin"] = src.Latitude.ToString(CultureInfo.InvariantCulture) + "," + src.Longitude.ToString(CultureInfo.InvariantCulture);
-            parameters["destination"] = dst.Latitude.ToString(CultureInfo.InvariantCulture) + "," + dst.Longitude.ToString(CultureInfo.InvariantCulture);
-            var gmapsBase = "https://maps.googleapis.com/maps/api/directions/";
-            var responseType = "xml"; // json/xml
-            var url = gmapsBase + responseType + "?" + string.Join("&", parameters.Select(kvp => string.Format("{0}={1}", kvp.Key, kvp.Value)));
+            parameters["flat"] = src.Latitude.ToString(CultureInfo.InvariantCulture);
+            parameters["flon"] = src.Longitude.ToString(CultureInfo.InvariantCulture);
+            parameters["tlat"] = dst.Latitude.ToString(CultureInfo.InvariantCulture);
+            parameters["tlon"] = dst.Longitude.ToString(CultureInfo.InvariantCulture);
+
+            var basrUrl = "http://www.yournavigation.org/api/1.0/gosmore.php?";
+            var url = basrUrl + string.Join("&", parameters.Select(kvp => string.Format("{0}={1}", kvp.Key, kvp.Value)));
 
             WebRequest request = WebRequest.Create(url);
             request.Method = "GET";
             WebResponse webResp = request.GetResponse();
-            XElement xdoc;
-
+            Rootobject route = null;
             using (var reader = new StreamReader(webResp.GetResponseStream()))
             {
-                xdoc = XElement.Parse(reader.ReadToEnd());
+                JavaScriptSerializer js = new JavaScriptSerializer();
+                var jsonResponse = reader.ReadToEnd();
+                route = (Rootobject)js.Deserialize(jsonResponse, typeof(Rootobject));
             }
 
-            var xstatus = xdoc.Element("status");
+            float[] data = new float[route.coordinates.Length * 2 + 1];
 
-            if (xstatus.Value != "OK")
-                throw new Exception("Result not OK");
-
-
-            var xdist = xdoc.Element("route").Element("leg").Element("distance").Element("value");
-            var xend = xdoc.Element("route").Element("leg").Element("end_location");
-            var xsteps = (from s in xdoc.Element("route").Element("leg").Elements("step") select s.Element("start_location"));
-
-            int i = 0;
-            var data = new float[xsteps.Count() * 2 + 2 + 1];
-            foreach (var xstep in xsteps)
+            for (int i = 0; i < route.coordinates.Length; ++i)
             {
-                data[i++] = (float)Convert.ToDouble(xstep.Element("lat").Value, CultureInfo.InvariantCulture);
-                data[i++] = (float)Convert.ToDouble(xstep.Element("lng").Value, CultureInfo.InvariantCulture);
+                float[] coordinate = route.coordinates[i];
+                data[2 * i] = coordinate[1];
+                data[2 * i + 1] = coordinate[0];
             }
-            data[i++] = (float)Convert.ToDouble(xend.Element("lat").Value, CultureInfo.InvariantCulture);
-            data[i++] = (float)Convert.ToDouble(xend.Element("lng").Value, CultureInfo.InvariantCulture);
-            data[i++] = (float)Convert.ToDouble(xdist.Value, CultureInfo.InvariantCulture);
+
+            data[data.Length - 1] = Convert.ToSingle(route.properties.distance, CultureInfo.InvariantCulture);
 
             // Sleep to not overload service
             Thread.Sleep(sleepTime);
