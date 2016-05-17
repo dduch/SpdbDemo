@@ -63,7 +63,7 @@ namespace Navigation
                     CostFromPrevious = 0.0
                 });
 
-                route.Append(geoData.GetRoute(source, stations.First().Position));
+                route.Append(new Route( new List<Point>() { source, stations.First().Position }));
                 k.WaypointIndex = route.GetPoints().Count() - 1;
                 lastLength = route.GetLength();
                 k.DistanceFromPrevious = lastLength;
@@ -102,7 +102,7 @@ namespace Navigation
             // Create part of route from last station to destination:
             if (!destination.Equals(stations.Last().Position))
             {
-                route.Append(geoData.GetRoute(stations.Last().Position, destination));
+                route.Append(new Route(new List<Point>() { stations.Last().Position, destination }));
                 // Adding last point of route that is different than last station
                 keypoints.Add(new Keypoint()
                 {

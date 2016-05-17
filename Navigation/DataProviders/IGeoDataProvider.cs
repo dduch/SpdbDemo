@@ -9,14 +9,6 @@ namespace Navigation.DataProviders
     /// </summary>
     public interface IGeoDataProvider
     {
-
-        /// <summary>
-        /// Returns object representing route between two point describing by coordinates
-        /// </summary>
-        /// <param name="source"> start place coordinates</param>
-        /// <param name="destination"> destination place coordinates</param>
-        IRoute GetRoute(Point source, Point destination);
-
         /// <summary>
         /// Returns object representing route between two stations
         /// </summary>

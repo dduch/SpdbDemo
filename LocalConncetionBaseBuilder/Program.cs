@@ -22,7 +22,7 @@ namespace LocalConncetionBaseBuilder
 
         static void Main(string[] args)
         {
-            Station[] stations = StationsManager.Get().ToArray();
+            Station[] stations = StationsManager.SafeGet().ToArray();
             BaseBuilder builder = new BaseBuilder(stations, "dbfile", new ServiceRouteBuilder());
 
             Console.WriteLine("Connection builder started");
