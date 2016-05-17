@@ -84,7 +84,7 @@ FormModule.controller('FormController', ['$scope', 'sharedMapService', '$http', 
                 $scope.reverseGeocoding();
             });
         }
-        else {
+        else if($scope.isResult == false){
             for (var i = 0; i < sharedMapService.map.layers.length; ++i) {
                 if (sharedMapService.map.layers[i].name == "Markers") {
                     sharedMapService.map.layers[i].clearMarkers();
