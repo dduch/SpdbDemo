@@ -95,6 +95,9 @@ namespace LocalConncetionBaseBuilder
                         var xmlBuilder = new NetworkBuilder();
                         var net = xmlBuilder.BuildNetworkFromXml(cmd[1]);
                         builder = new BaseBuilder(stations, "dbfile", new NetworkRouteBuilder(net, stations), false);
+                        xmlBuilder = null;
+                        GC.Collect();
+                        GC.WaitForPendingFinalizers();
                         Console.WriteLine("Resource loaded successfully. You can start building.");
                     }
                     else if (cmd[0] == "test")
@@ -102,6 +105,8 @@ namespace LocalConncetionBaseBuilder
                         var xmlBuilder = new NetworkBuilder();
                         var net = xmlBuilder.BuildNetworkFromXml("mapfile.osm");
                         xmlBuilder = null;
+                        GC.Collect();
+                        GC.WaitForPendingFinalizers();
                         builder = new BaseBuilder(stations, "dbfile", new NetworkRouteBuilder(net, stations), false);
                         Console.WriteLine("Resource loaded successfully. Starting build ...");
                         builder.StartConstruction();

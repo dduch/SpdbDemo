@@ -19,8 +19,6 @@ namespace LocalConncetionBaseBuilder
         private Station[] stations;
         private Thread downloader = null;
         private IRouteBuilder routeBuilder;
-        private readonly int sleepInterval = 1;
-        private readonly int sleepTime = 250; // 250 ms
         private readonly int postExceptionSleepTime = 2 * 1000; // 2 s
         private bool retry;
 
@@ -172,10 +170,6 @@ namespace LocalConncetionBaseBuilder
                                     wr.Write(route[k]);
 
                                 progress = 100.0 * (i * n + (j + 1)) / ((n * n));
-
-                                // Sleep to not overload service
-                                if ((i * n + (j + 1)) % sleepInterval == 0)
-                                    Thread.Sleep(sleepTime);
                             }
                             ++j;
                         }
@@ -198,18 +192,13 @@ namespace LocalConncetionBaseBuilder
                     if(retry)
                     {
                         // Sleep some time after exception occured
+                        // and then try to get connection again
                         Thread.Sleep(postExceptionSleepTime);
                     }
                     else
                     {
-                        //i = (j - 1) >= 0 ? i : i - 1;
-                        //j = (j - 1) >= 0 ? j - 1 : n - 1;
-                        //process = false;
-                        //completed = true;
-                        //Console.WriteLine("Stopping construction");
-                        //downloader = null;
-
-                        ++j; // TMP
+                        // Proceed to next connection
+                        ++j;
                     }                  
                 }
             }

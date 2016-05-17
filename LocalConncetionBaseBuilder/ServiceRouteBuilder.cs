@@ -8,6 +8,7 @@ using System.Globalization;
 using System.Net;
 using System.IO;
 using System.Xml.Linq;
+using System.Threading;
 
 namespace LocalConncetionBaseBuilder
 {
@@ -20,6 +21,8 @@ namespace LocalConncetionBaseBuilder
             ["mode"] = "bicycling",
             ["units"] = "metric",
         };
+
+        private readonly int sleepTime = 250; // 250 ms
 
         public float[] BuildRoute(Point src, Point dst)
         {
@@ -59,6 +62,9 @@ namespace LocalConncetionBaseBuilder
             data[i++] = (float)Convert.ToDouble(xend.Element("lat").Value, CultureInfo.InvariantCulture);
             data[i++] = (float)Convert.ToDouble(xend.Element("lng").Value, CultureInfo.InvariantCulture);
             data[i++] = (float)Convert.ToDouble(xdist.Value, CultureInfo.InvariantCulture);
+
+            // Sleep to not overload service
+            Thread.Sleep(sleepTime);
 
             return data;
         }
