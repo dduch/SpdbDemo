@@ -7,7 +7,7 @@ FormModule.controller('FormController', ['$scope', 'sharedMapService', '$http', 
         useMyLocation: false,
         latitude: undefined,
         longitude: undefined,
-        autocompleteData: function (query) {
+        autocompleteData: function (query){
             return $scope.querySearch(query);
         },
         selectedStartItem: undefined,
@@ -21,6 +21,7 @@ FormModule.controller('FormController', ['$scope', 'sharedMapService', '$http', 
     $scope.isResult = false;
     $scope.routeDistance = 0.0;
     $scope.routeCost = 0.0;
+    var stations = new Array();
 
     $scope.showAdvanced = function (ev) {
         $mdDialog.show({
@@ -61,6 +62,15 @@ FormModule.controller('FormController', ['$scope', 'sharedMapService', '$http', 
 
     angular.element(document).ready(function () {
         sharedMapService.initialize();
+
+        for (station in CONST.stations.Stations) {
+            var s = {
+                display_name: CONST.stations.Stations[station].Localization + ", " + CONST.stations.Stations[station].District,
+                lat: CONST.stations.Stations[station].Latitude,
+                lon: CONST.stations.Stations[station].Longitude
+            }
+            stations.push(s);
+        }
     });
 
 
@@ -100,9 +110,18 @@ FormModule.controller('FormController', ['$scope', 'sharedMapService', '$http', 
                         var result = new Array();
                         for (object in response.data) {
                             var toTrim = response.data[object].display_name.indexOf(", województwo");
-                            response.data[object].display_name = response.data[object].display_name.substring(0, toTrim);
-                            result.push(response.data[object]);
+                            if (toTrim > -1) {
+                                response.data[object].display_name = response.data[object].display_name.substring(0, toTrim);
+                                result.push(response.data[object]);
+                            }
                         }
+
+                        for (station in stations) {
+                            if (stations[station].display_name.indexOf(query) > 0) {
+                                result.push(stations[station]);
+                            }
+                        }
+
                         return result;
                     }, function (response) { });
     },
