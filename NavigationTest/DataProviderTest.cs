@@ -12,12 +12,18 @@ namespace NavigationTest
     [TestFixture]
     class DataProviderTest
     {
+        [OneTimeSetUp]
+        public void SetUp()
+        {
+            GeoDataProvider.Initialize(TestContext.CurrentContext.TestDirectory + "\\..\\..\\..\\SpdbDemo\\App_Data\\stationsRoutesDB");
+        }
+
         [Test]
         public void CheckGeoProvider()
         {
             IGeoDataProvider geoProvider = new GeoDataProvider();
-            geoProvider.GetStations();
-            geoProvider.GetRoute(32, 128);
+            var stations = geoProvider.GetStations();
+            geoProvider.GetRoute(stations.First().Id, stations.Last().Id);
         }
     }
 }

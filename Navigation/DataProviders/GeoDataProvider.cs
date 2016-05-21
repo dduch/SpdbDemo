@@ -34,12 +34,12 @@ namespace Navigation.DataProviders
         //    ["lang"] = "pl",
         //};
 
-        private static Dictionary<KeyValuePair<int, int>, float[]> StationsRoutes = new Dictionary<KeyValuePair<int, int>, float[]>();
+        private static Dictionary<KeyValuePair<int, int>, float[]> StationsRoutes = null;
 
-        static GeoDataProvider()
+        public static void Initialize(string pathToConnectionsBase)
         {
-            string path = System.Web.Hosting.HostingEnvironment.MapPath("~/App_Data/stationsRoutesDB");
-            BinaryReader reader = new BinaryReader(new FileStream(path, FileMode.Open, FileAccess.Read));
+            StationsRoutes = new Dictionary<KeyValuePair<int, int>, float[]>();
+            BinaryReader reader = new BinaryReader(new FileStream(pathToConnectionsBase, FileMode.Open, FileAccess.Read));
             Dictionary <int, bool> handledStations = StationsManager.SafeGet().ToDictionary(
                 station => station.Id,
                 station => false

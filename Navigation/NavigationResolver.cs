@@ -47,6 +47,8 @@ namespace Navigation
             double totalCost = 0.0;
             double lastCost = 0.0;
             double lastLength = 0.0;
+            double distToStart = 0.0;
+            double distToEnd = 0.0;
 
             // 1) Create part of route from source to first station:
             k = new Keypoint();
@@ -67,6 +69,7 @@ namespace Navigation
                 k.WaypointIndex = route.GetPoints().Count() - 1;
                 lastLength = route.GetLength();
                 k.DistanceFromPrevious = lastLength;
+                distToStart = lastLength;
             }
             else
             {
@@ -113,6 +116,7 @@ namespace Navigation
                     DistanceFromPrevious = route.GetLength() - lastLength,
                     CostFromPrevious = 0.0
                 });
+                distToEnd = route.GetLength() - lastLength;
             }
 
             var waypoints = route.GetPoints().Select(p => new Waypoint() { Latitude = p.Latitude, Longitude = p.Longitude }).ToArray();
@@ -122,7 +126,7 @@ namespace Navigation
                 Waypoints = waypoints,
                 Keypoints = keypoints.ToArray(),
                 EstimatedCost = totalCost,
-                RouteLength = route.GetLength()
+                RouteLength = route.GetLength() - distToStart - distToEnd
             };
         }
     }

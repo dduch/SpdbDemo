@@ -11,7 +11,7 @@ namespace LocalConncetionBaseBuilder.Net
     class Node
     {
         public Point Position { get; }
-        public List<Arch> Archs { get; }
+        public List<Arch> Archs { get; set; }
 
         public Node(Point position)
         {

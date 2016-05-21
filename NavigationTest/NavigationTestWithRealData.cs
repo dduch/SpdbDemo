@@ -13,6 +13,12 @@ namespace NavigationTest
     [TestFixture]
     class NavigationTestWithRealData
     {
+        [OneTimeSetUp]
+        public void SetUp()
+        {
+            GeoDataProvider.Initialize(TestContext.CurrentContext.TestDirectory + "\\..\\..\\..\\SpdbDemo\\App_Data\\stationsRoutesDB");
+        }
+
         [Test]
         public void BasicNavigationTest()
         {

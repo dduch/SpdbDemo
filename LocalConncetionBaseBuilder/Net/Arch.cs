@@ -17,7 +17,7 @@ namespace LocalConncetionBaseBuilder.Net
 
     class Arch
     {
-        public int To { get; }
+        public int To { get; set; }
         public ArchType Type { get; set; }
         public Route Content { get; set; }
         public Arch(int to, ArchType type, Route content)

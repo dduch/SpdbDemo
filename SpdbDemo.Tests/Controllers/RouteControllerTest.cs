@@ -12,6 +12,12 @@ namespace SpdbDemo.Tests.Controllers
     [TestClass]
     public class RouteControllerTest
     {
+        [TestInitialize]
+        public void SetUp()
+        {
+            GeoDataProvider.Initialize("../../../SpdbDemo/App_Data/stationsRoutesDB");
+        }
+
         [TestMethod]
         public void FindRoute()
         {

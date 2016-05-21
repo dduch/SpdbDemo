@@ -9,6 +9,7 @@ using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
+using Navigation.DataProviders;
 
 namespace SpdbDemo
 {
@@ -31,6 +32,8 @@ namespace SpdbDemo
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+
+            GeoDataProvider.Initialize(System.Web.Hosting.HostingEnvironment.MapPath("~/App_Data/stationsRoutesDB"));
         }
     }
 }

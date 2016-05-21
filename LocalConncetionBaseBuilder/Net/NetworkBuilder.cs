@@ -167,6 +167,28 @@ namespace LocalConncetionBaseBuilder.Net
             return splittedWays;
         }
 
+        HashSet<int> FindReachableNodes(List<Node> nodes, int seed)
+        {
+            HashSet<int> expandedNodes = new HashSet<int>();
+            Queue<int> nodesToExpand = new Queue<int>();
+
+            nodesToExpand.Enqueue(seed);
+
+            while (nodesToExpand.Count > 0)
+            {
+                var current = nodesToExpand.Dequeue();
+                if (expandedNodes.Add(current))
+                {
+                    foreach (var archFromCurrent in nodes[current].Archs)
+                    {
+                        nodesToExpand.Enqueue(archFromCurrent.To);
+                    }
+                }
+            }
+
+            return expandedNodes;
+        }
+
         public Network BuildNetworkFromXml(string xmlFileName)
         {
             // TODO: Validation if point is accessible by bike
@@ -247,7 +269,54 @@ namespace LocalConncetionBaseBuilder.Net
             Console.WriteLine("All points count = " + allPoints.Count);
             Console.WriteLine("All nodes count = " + nodesIds.Count);
 
-            var net = new Network(nodes);
+            // Free memory
+            nodesMap = null;
+            nodesIds = null;
+            allPoints = null;
+            ways = null;
+
+            // Integrity check
+            int bestSeed = 2770;
+            HashSet<int> reachableNodes = FindReachableNodes(nodes, bestSeed);
+            //int bestSeed = 0;
+            //HashSet<int> reachableNodes = new HashSet<int>();
+            //for (int seed = 0; seed < nodes.Count; ++seed)
+            //{
+            //    var reachableFromSeed = FindReachableNodes(nodes, seed);
+            //    if (reachableFromSeed.Count > reachableNodes.Count)
+            //    {
+            //        reachableNodes = reachableFromSeed;
+            //        bestSeed = seed;
+            //    }
+            //}
+
+            // Up to this point expanded nodes contain all nodes reachable from seed
+            double reachableToAll = 100.0 * reachableNodes.Count / nodes.Count;
+            Console.WriteLine(reachableNodes.Count + " nodes reachable from " + bestSeed + " (" + reachableToAll + "%)");
+
+            Dictionary<int, int> transformationMap = new Dictionary<int, int>(reachableNodes.Count);
+            int ndid = 0;
+            foreach(var node in reachableNodes)
+            {
+                transformationMap.Add(node, ndid++);
+            }
+
+            Node[] transformedNodes = new Node[reachableNodes.Count];
+            for(int i = 0; i < nodes.Count; ++i)
+            {
+                if(reachableNodes.Contains(i))
+                {
+                    var transformedArchs = nodes[i].Archs.Where(a => reachableNodes.Contains(a.To)).ToList();
+                    foreach(var arch in transformedArchs)
+                    {
+                        arch.To = transformationMap[arch.To];
+                    }
+                    nodes[i].Archs = transformedArchs;
+                    transformedNodes[transformationMap[i]] = nodes[i];
+                }
+            }
+
+            var net = new Network(transformedNodes.ToList());
 
             return net;
         }
