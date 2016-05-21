@@ -28,7 +28,7 @@ namespace SpdbDemo.Controllers
             }
             catch(Exception ex)
             {
-                return null;
+                return Content(HttpStatusCode.InternalServerError, ex.Message);
             }
         }
     }
