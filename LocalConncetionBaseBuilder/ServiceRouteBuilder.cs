@@ -30,7 +30,7 @@ namespace LocalConncetionBaseBuilder
             ["lang"] = "pl",
         };
 
-        private readonly int sleepTime = 100;
+        private readonly int sleepTime = 0;
 
         public float[] BuildRoute(Point src, Point dst)
         {
@@ -62,7 +62,7 @@ namespace LocalConncetionBaseBuilder
                 data[2 * i + 1] = coordinate[0];
             }
 
-            data[data.Length - 1] = Convert.ToSingle(route.properties.distance, CultureInfo.InvariantCulture);
+            data[data.Length - 1] = 1000 * Convert.ToSingle(route.properties.distance, CultureInfo.InvariantCulture);
 
             // Sleep to not overload service
             Thread.Sleep(sleepTime);

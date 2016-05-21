@@ -39,6 +39,7 @@ namespace LocalConncetionBaseBuilder
                     if (cmd[0] == "download")
                     {
                         builder = new BaseBuilder(stations, "dbfile", new ServiceRouteBuilder());
+                        Console.WriteLine("Switched to download mode");
                     }
                     else if (cmd[0] == "start")
                     {
@@ -92,6 +93,7 @@ namespace LocalConncetionBaseBuilder
                     }
                     else if (cmd[0] == "from")
                     {
+                        Console.WriteLine("Switched to xml resource mode. Computing graph ...");
                         var xmlBuilder = new NetworkBuilder();
                         var net = xmlBuilder.BuildNetworkFromXml(cmd[1]);
                         builder = new BaseBuilder(stations, "dbfile", new NetworkRouteBuilder(net, stations), false);

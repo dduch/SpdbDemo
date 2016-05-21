@@ -247,7 +247,7 @@ FormModule.controller('FormController', ['$scope', 'sharedMapService', '$http', 
                 var info = {
                     From: data.Keypoints[keypoint].Name,
                     Type: "On foot",
-                    Distance: data.Keypoints[keypoint].CostFromPrevious,
+                    Distance: data.Keypoints[keypoint].DistanceFromPrevious,
                 }
                 $scope.navigation.pathDetails.push(info);
             }
