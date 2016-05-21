@@ -10,7 +10,6 @@ namespace LocalConncetionBaseBuilder.Net
     class EdgeCost : IEdgeCost
     {
         private double value;
-        private static readonly double bikePreferenceFactor = 0.8;
 
         public EdgeCost(double value)
         {
@@ -19,10 +18,21 @@ namespace LocalConncetionBaseBuilder.Net
 
         public EdgeCost(Arch arch)
         {
-            if (arch.Type == ArchType.BICYCLE)
-                this.value = arch.Content.GetLength() * bikePreferenceFactor;
-            else
-                this.value = arch.Content.GetLength();
+            switch (arch.Type)
+            {
+                case ArchType.BICYCLE:
+                    value = arch.Content.GetLength() * 1.0;
+                    break;
+                case ArchType.MOTOR:
+                    value = arch.Content.GetLength() * 1.2;
+                    break;
+                case ArchType.FOOT:
+                    value = arch.Content.GetLength() * 1.3;
+                    break;
+                default:
+                    value = arch.Content.GetLength() * 1.4;
+                    break;
+            }
         }
 
         public double Value()

@@ -23,6 +23,8 @@ FormModule.controller('FormController', ['$scope', 'sharedMapService', '$http', 
     $scope.routeCost = 0.0;
     var stations = new Array();
 
+    $scope.mapHeight = Math.round($(window).height() * 0.65);
+
     $scope.showAdvanced = function (ev) {
         $mdDialog.show({
             controller: DialogController,

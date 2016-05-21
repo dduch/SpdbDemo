@@ -22,7 +22,7 @@ namespace LocalConncetionBaseBuilder.Net
         {
             var srcNode = nodes[vsrc];
             var toDstArch = srcNode.Archs.Find(arch => arch.To == vdst);  
-            return new EdgeCost(toDstArch.Content.GetLength());
+            return new EdgeCost(toDstArch);
         }
 
         public IEdgeCost EstimateCost(int vsrc, int vdst)

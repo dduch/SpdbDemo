@@ -24,32 +24,32 @@ namespace LocalConncetionBaseBuilder.Net
 
     // Not thread safe
     class NetworkBuilder
-    { 
+    {
+        private static readonly Dictionary<string, ArchType> _highwaysDictionary = new Dictionary<string, ArchType>()
+        {
+            {"trunk",ArchType.MOTOR},
+            {"primary",ArchType.MOTOR},
+            {"secondary",ArchType.MOTOR},
+            {"tertiary",ArchType.MOTOR},
+            {"unclassified",ArchType.MOTOR},
+            {"residential",ArchType.MOTOR},
+            {"service",ArchType.MOTOR},
+            {"trunk_link",ArchType.MOTOR},
+            {"primary_link",ArchType.MOTOR},
+            {"secondary_link",ArchType.MOTOR},
+            {"tertiary_link",ArchType.MOTOR},
+            {"living_street",ArchType.FOOT},
+            {"pedestrian",ArchType.FOOT},
+            {"track",ArchType.OTHER},
+            {"road",ArchType.OTHER},
+            {"footway",ArchType.FOOT},
+            {"path",ArchType.OTHER},
+            {"cycleway",ArchType.BICYCLE},
+        };
 
         private List<Way> ExtractWays(IEnumerable<XElement> allWays)
         {
             var ways = new List<Way>(allWays.Count());
-
-            string[] validHighways = new string[]
-            {
-                "trunk",
-                "primary",
-                "secondary",
-                "tertiary",
-                "unclassified",
-                "residential",
-                "trunk_link",
-                "primary_link",
-                "secondary_link",
-                "tertiary_link",
-                "living_street",
-                "pedestrian",
-                "track",
-                "road",
-                "footway",
-                "path",
-                "cycleway"
-            };
 
             foreach (var way in allWays)
             {
@@ -69,23 +69,27 @@ namespace LocalConncetionBaseBuilder.Net
                     if (key == "bicycle" && value == "no")
                     {
                         valid = false;
-                        break;
+                        break; // No bicycles allowed on this road anyway
                     }
-                    else if ((key == "highway" && value == "cycleway") || key == "cycleway")
+                    else if (key == "cycleway")
                     {
                         valid = true;
                         type = ArchType.BICYCLE;
                     }
+                    else if (key == "highway")
+                    {
+                        if(_highwaysDictionary.ContainsKey(value))
+                        {
+                            valid = true;
+                            type = _highwaysDictionary[value];
+                        }
+                    }
                     else if (key == "junction")
                     {
                         valid = true;
+                        type = ArchType.MOTOR;
                         directionOverriden = true;
                         bikeDirection = 1;
-                    }
-                    else if (key == "highway")
-                    {
-                        if (validHighways.Contains(value))
-                            valid = true;
                     }
                     else if (key == "oneway")
                     {
@@ -107,12 +111,10 @@ namespace LocalConncetionBaseBuilder.Net
 
                         directionOverriden = true;
                     }
-
                 }
 
                 if (valid)
                 {
-                    // TODO: It is possible that some of the nodes will have -1 id
                     var nodes = way.Elements("nd").Select(ndref => Convert.ToInt64(ndref.Attribute("ref").Value)).ToList();
                     var dir = directionOverriden ? bikeDirection : direction;
                     if (nodes.Count > 0)
