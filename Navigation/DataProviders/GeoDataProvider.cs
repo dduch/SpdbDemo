@@ -13,6 +13,7 @@ using System.Xml.Serialization;
 using System.Web.Script.Serialization;
 using INavigation;
 using Navigation.DataModels;
+using System.Web;
 
 namespace Navigation.DataProviders
 {
@@ -37,8 +38,8 @@ namespace Navigation.DataProviders
 
         static GeoDataProvider()
         {
-            string connectionsDbFileName = "stationsRoutesDB";
-            BinaryReader reader = new BinaryReader(new FileStream(connectionsDbFileName, FileMode.Open, FileAccess.Read));
+            string path = System.Web.Hosting.HostingEnvironment.MapPath("~/App_Data/stationsRoutesDB");
+            BinaryReader reader = new BinaryReader(new FileStream(path, FileMode.Open, FileAccess.Read));
             Dictionary <int, bool> handledStations = StationsManager.SafeGet().ToDictionary(
                 station => station.Id,
                 station => false

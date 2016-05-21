@@ -59,25 +59,5 @@ namespace Navigation.Properties {
                 resourceCulture = value;
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        public static byte[] stations {
-            get {
-                object obj = ResourceManager.GetObject("stations", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        public static byte[] stationsRoutesDB {
-            get {
-                object obj = ResourceManager.GetObject("stationsRoutesDB", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
     }
 }
